@@ -23,5 +23,26 @@ namespace Editor.GameProject
         {
             InitializeComponent();
         }
+        private void OnProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == openProjectButton)
+            {
+                if (newProjectButton.IsChecked == true)
+                {
+                    newProjectButton.IsChecked = false;
+                    BrowserContent.Margin = new Thickness(0);
+                }
+                openProjectButton.IsChecked = true;
+            }
+            else
+            {
+                if (openProjectButton.IsChecked == true)
+                {
+                    openProjectButton.IsChecked = false;
+                    BrowserContent.Margin = new Thickness(-800, 0, 0, 0);
+                }
+                newProjectButton.IsChecked = true;
+            }
+        }
     }
 }

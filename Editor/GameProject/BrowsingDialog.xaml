@@ -5,8 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Editor.GameProject"
         mc:Ignorable="d"
-        Title="BrowsingDialog" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-    <Grid>
-        
-    </Grid>
+        Title="Project Browser" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="26">
+            <ToggleButton Content="New Project" IsChecked="False" Click="OnProjectButton_Click" x:Name="newProjectButton" FontSize="30"/>
+                <ToggleButton Content="Open Project" IsChecked="True" Click="OnProjectButton_Click" x:Name="openProjectButton" FontSize="30" Margin="30, 0, 0, 0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="1" x:Name="BrowserContent">
+                <local:OpenProjectView/>
+                <local:NewProjectView/>
+
+            </StackPanel>
+        </Grid>
 </Window>
