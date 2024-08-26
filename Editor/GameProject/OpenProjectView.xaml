@@ -14,7 +14,7 @@
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0, 30, 0, 0">
-                <Button Content="Create" Width="96" IsDefault="True"/>
+                <Button Content="Open" Width="96" IsDefault="True"/>
                 <Button Content="Exit" Width="96" Margin="30, 0, 0, 0" IsCancel="True"/>
             </StackPanel>
         </StackPanel>
