@@ -44,6 +44,7 @@ namespace Editor.GameProject
                 if(_projectName != value)
                 {
                     _projectName = value;
+                    ValidateProject();
                     OnPropertyChanged(nameof(ProjectName));
                 }
             } 
@@ -57,7 +58,21 @@ namespace Editor.GameProject
                 if (_projectPath != value)
                 {
                     _projectPath = value;
+                    ValidateProject();
                     OnPropertyChanged(nameof(ProjectPath));
+                }
+            }
+        }
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                if (_errorMessage != value)
+                {
+                    _errorMessage = value;
+                    OnPropertyChanged(nameof(ErrorMessage));
                 }
             }
         }
@@ -65,6 +80,57 @@ namespace Editor.GameProject
         private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
         //we dont want to allow the user to change the templates so we use readonly
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
+        private bool _isValid;
+        public bool IsValid
+        {
+            get => _isValid;
+            set
+            {
+                if (_isValid != value)
+                {
+                    _isValid = value;
+                    OnPropertyChanged(nameof(IsValid));
+                }
+            }
+        }
+
+        private bool ValidateProject()
+        {
+            var path = ProjectPath;
+            if(!Path.EndsInDirectorySeparator(path)) path += Path.DirectorySeparatorChar;
+            path += $@"{ProjectName}\";
+
+            IsValid = false;
+            if (string.IsNullOrWhiteSpace(ProjectName.Trim()))
+            {
+                ErrorMessage = "Project name cannot be empty!";
+            }
+            else if(ProjectName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+            {
+                ErrorMessage = "Project name contains invalid characters!";
+            }
+            else if (string.IsNullOrWhiteSpace(ProjectPath.Trim()))
+            {
+                ErrorMessage = "Project path cannot be empty!";
+            }
+            else if (ProjectPath.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+            {
+                ErrorMessage = "Project path contains invalid characters!";
+            }
+            else if(Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any())
+            {
+                ErrorMessage = "Project folder already exists and is not empty!";
+            }
+            else
+            {
+                ErrorMessage = string.Empty;
+                IsValid = true;
+            }
+            return IsValid;
+
+
+            
+        }
          
         public NewProject()
         {
@@ -73,6 +139,7 @@ namespace Editor.GameProject
             {
                 var templateFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
                 Debug.Assert(templateFiles.Any());
+                //Loading all templates
                 foreach (var file in templateFiles)
                 {
                     var template = Serializer.FromFile<ProjectTemplate>(file);
@@ -84,6 +151,7 @@ namespace Editor.GameProject
 
                     _projectTemplates.Add(template);
                 }
+                ValidateProject();
             }
             catch (Exception e)
             {
