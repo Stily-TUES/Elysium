@@ -38,7 +38,7 @@
             <Button Content="Browse" Width="45" Margin="5, 0, 0, 0"/>
         </StackPanel>
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0, 30, 0, 0">
-            <Button Content="Create" Width="96" IsDefault="True" IsEnabled="{Binding IsValid}"/>
+            <Button Content="Create" Click="OnCreateButton_Click" Width="96" IsDefault="True" IsEnabled="{Binding IsValid}"/>
             <Button Content="Exit" Width="96" Margin="30, 0, 0, 0" IsCancel="True"/>
         </StackPanel>
         <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Center" Margin="0, 20, 0, 0" Foreground="Red" FontSize="24"/>

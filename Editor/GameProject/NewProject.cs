@@ -14,7 +14,7 @@ using System.Windows.Xps;
 
 namespace Editor.GameProject
 {
-    //needed for deserialization
+    //we use data Contract for serialization to convert the wanted fields to xml
     [DataContract]
     public class ProjectTemplate
     {
@@ -49,7 +49,7 @@ namespace Editor.GameProject
                 }
             } 
         }
-        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Elysium\";
+        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\ElysiumProjects\";
         public string ProjectPath
         {
             get => _projectPath;
@@ -128,8 +128,51 @@ namespace Editor.GameProject
             }
             return IsValid;
 
+        }
 
+        public string CreateProject(ProjectTemplate template)
+        {
             
+            if (ValidateProject())
+            {
+                if (!Path.EndsInDirectorySeparator(ProjectPath)) ProjectPath += Path.DirectorySeparatorChar;
+                string path = $@"{ProjectPath}{ProjectName}\";
+                try
+                {
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    foreach (var folder in template.Folders)
+                    {
+                        Directory.CreateDirectory(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), folder)));
+                    }
+                    var dirInfo = new DirectoryInfo(path + @".elysium");
+                    dirInfo.Attributes |= FileAttributes.Hidden;
+                    File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "icon.png")));
+                    File.Copy(template.ScreenshotPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "screenshot.png")));
+
+
+                    var projectXml = File.ReadAllText(template.ProjectPath);
+                    projectXml = string.Format(projectXml, ProjectName, ProjectPath);
+                    var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{Project.Extension}"));
+                    File.WriteAllText(projectPath, projectXml);
+
+                    //generator for template placeholder.elysium
+                    //var project = new Project(ProjectName, path);
+                    //Serializer.ToFile(project, path + $"{ProjectName}" + Project.Extension);
+                    return path;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    return string.Empty;
+                }
+                //Directory.CreateDirectory(path);
+                //foreach (var folder in template.Folders)
+                //{
+                //    Directory.CreateDirectory(Path.Combine(path, folder));
+                //}
+                //File.Copy(template.ProjectPath, Path.Combine(path, ProjectName + ".elysium"));
+            }
+            else return string.Empty;
         }
          
         public NewProject()
