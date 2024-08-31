@@ -156,6 +156,7 @@ namespace Editor.GameProject
                     File.WriteAllText(projectPath, projectXml);
 
                     //generator for template placeholder.elysium
+                    
                     //var project = new Project(ProjectName, path);
                     //Serializer.ToFile(project, path + $"{ProjectName}" + Project.Extension);
                     return path;
