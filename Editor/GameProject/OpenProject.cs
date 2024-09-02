@@ -18,12 +18,12 @@ namespace Editor.GameProject
         [DataMember]
         public string Name { get; set; }
         [DataMember]
-        public string Path { get; set; }
+        public string ProjectPath { get; set; }
         [DataMember]
         public DateTime Date { get; set; }
         public byte[] Icon { get; set; }
         public byte[] Screenshot { get; set; }
-        public string FullPath { get => $"{Path}{Name}{Project.Extension}"; }
+        public string FullPath { get => $"{ProjectPath}{Name}{Project.Extension}"; }
     }
     [DataContract]
     public class ProjectDataList
@@ -65,8 +65,8 @@ namespace Editor.GameProject
                 {
                     if (File.Exists(project.FullPath))
                     {
-                        project.Icon = File.ReadAllBytes($@"{project.Path}\.elysium\icon.png");
-                        project.Screenshot = File.ReadAllBytes($@"{project.Path}\.elysium\screenshot.png");
+                        project.Icon = File.ReadAllBytes($@"{project.ProjectPath}\.elysium\icon.png");
+                        project.Screenshot = File.ReadAllBytes($@"{project.ProjectPath}\.elysium\screenshot.png");
                         _projects.Add(project);
                     }
                 }
@@ -95,7 +95,7 @@ namespace Editor.GameProject
             }
             WriteProjectData();
 
-            return null;
+            return Project.Load(project.FullPath);
         }
 
        

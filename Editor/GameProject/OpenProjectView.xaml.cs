@@ -24,5 +24,24 @@ namespace Editor.GameProject
         {
             InitializeComponent();
         }
+        private void OpenRecentProject()
+        {
+            var project = OpenProject.Open(recentProjectsList.SelectedItem as ProjectData);
+            bool dialogResult = false;
+            var window = Window.GetWindow(this);
+            if (project != null)
+            {
+                dialogResult = true;
+                window.DataContext = project;
+            }
+            window.DialogResult = dialogResult;
+            window.Close();
+        }
+
+        private void OnOpenProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenRecentProject();
+        }
+
     }
 }

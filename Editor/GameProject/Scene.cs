@@ -29,6 +29,21 @@ namespace Editor.GameProject
         [DataMember]
         public Project Project { get; private set; }
 
+        public bool _isLoaded;
+        [DataMember]
+        public bool isLoaded
+        {
+            get => _isLoaded;
+            set
+            {
+                if (_isLoaded != value)
+                {
+                    _isLoaded = value;
+                    OnPropertyChanged(nameof(isLoaded));
+                }
+            }
+        }
+
         public Scene(Project project, string name)
         {
             Debug.Assert(project != null);
