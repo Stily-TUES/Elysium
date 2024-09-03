@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.IO;
 
-namespace Editor.GameProject.Utils
+namespace Editor.Utils
 {
     public static class Serializer
     {
@@ -31,13 +31,13 @@ namespace Editor.GameProject.Utils
             {
                 using var fs = new FileStream(path, FileMode.Open);
                 var serializer = new DataContractSerializer(typeof(T));
-                T instance = (T)serializer.ReadObject(fs );
+                T instance = (T)serializer.ReadObject(fs);
                 return instance;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
-                return default(T);
+                return default;
                 //TODO: Log error
             }
         }
