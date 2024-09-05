@@ -15,11 +15,10 @@ using System.Windows.Xps;
 
 namespace Editor.GameProject
 {
-    //we use data Contract for serialization to convert the wanted fields to xml
+    
     [DataContract]
     public class ProjectTemplate
     {
-        //we use DataMemeber to serialize the fields
         [DataMember]
         public string ProjectType { get; set; }
         [DataMember]

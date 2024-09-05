@@ -16,25 +16,21 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150" MinWidth="20"/>
-
             <ColumnDefinition Width="5"/>
-
             <ColumnDefinition Width="*" MinWidth="20"/>
-
             <ColumnDefinition Width="5"/>
-
             <ColumnDefinition Width="150" MinWidth="20"/>
-
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Background="#1a1f27" Height="30">
         </StackPanel>
 
         <Border Grid.Row="1" Grid.Column="0" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">
-            <StackPanel>
-                <TextBlock Text="Hierarchy" Foreground="White" FontSize="16" Margin="10"/>
-
-            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Hierarchy" Foreground="White" FontSize="16" Margin="10"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" Background="#1a1f27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -42,34 +38,34 @@
         <Border Grid.Row="1" Grid.Column="2" Background="#1f2530" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">
             <Grid>
                 <Canvas>
-
+  
                 </Canvas>
             </Grid>
         </Border>
 
-
         <GridSplitter Grid.Row="1" Grid.Column="3" Width="5" Background="#1a1f27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
         <Border Grid.Row="1" Grid.Column="4" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">
-            <StackPanel>
-                <TextBlock Text="Inspector" Foreground="White" FontSize="16" Margin="10"/>
-
-            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Inspector" Foreground="White" FontSize="16" Margin="10"/>
+                    <local:ProjectLayoutView/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="5" Height="5" Background="#1a1f27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-
         <Border Grid.Row="3" Grid.ColumnSpan="5" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1">
             <TabControl Background="#2a2f38" Foreground="White">
                 <TabItem Header="Scripts">
-
+          
                 </TabItem>
                 <TabItem Header="Textures">
-
+                 
                 </TabItem>
                 <TabItem Header="Models">
-
+                  
                 </TabItem>
             </TabControl>
         </Border>
