@@ -11,7 +11,7 @@ using Editor.Common;
 namespace Editor.GameProject
 {
     [DataContract]
-    public class Scene : BaseViewModel
+    public class Scene
     {
         private string _name;
         [DataMember]
@@ -23,7 +23,6 @@ namespace Editor.GameProject
                 if (_name != value)
                 {
                     _name = value;
-                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -40,7 +39,6 @@ namespace Editor.GameProject
                 if (_isLoaded != value)
                 {
                     _isLoaded = value;
-                    OnPropertyChanged(nameof(isLoaded));
                 }
             }
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Editor.Commands;
+using Editor.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,23 +15,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor.Editors
+namespace Editor.Editors;
+
+/// <summary>
+/// Interaction logic for ProjectLayoutView.xaml
+/// </summary>
+public partial class ProjectLayoutView : UserControl
 {
-    /// <summary>
-    /// Interaction logic for ProjectLayoutView.xaml
-    /// </summary>
-    public partial class ProjectLayoutView : UserControl
+    public ProjectManager ProjectManager { get; set; }
+    public ProjectLayoutView()
     {
-        public ProjectLayoutView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void OnAddSceneButton_Click(object sender, RoutedEventArgs e)
-        {
-            var project = GameProject.Project.CurrentLoadedProject;
-            if (project != null) project.AddNewScene("New Scene " + project.Scenes.Count);
+    private void OnAddSceneButton_Click(object sender, RoutedEventArgs e)
+    {
+        var PM = ProjectManager;
+        if (PM != null) PM.Add(new AddNewSceneCommand(PM.Project, "New Scene " + PM.Project.Scenes.Count));
 
-        }
     }
 }

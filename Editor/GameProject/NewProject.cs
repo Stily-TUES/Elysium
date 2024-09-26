@@ -33,8 +33,8 @@ namespace Editor.GameProject
     }
     class NewProject : BaseViewModel
     {
-        //TODO: get the path from the instalation location
-        private readonly string _templatePath = @"..\..\..\..\Editor\Templates";
+        
+        private readonly string _templatePath = @"../../../../Editor/Templates";
         private string _projectName = "New Project";
         public string ProjectName 
         { 
@@ -78,7 +78,7 @@ namespace Editor.GameProject
         }
 
         private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
-        //we dont want to allow the user to change the templates so we use readonly
+        
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
         private bool _isValid;
         public bool IsValid
@@ -156,7 +156,7 @@ namespace Editor.GameProject
                     File.WriteAllText(projectPath, projectXml);
 
                     //generator for template placeholder.elysium
-                    
+
                     //var project = new Project(ProjectName, path);
                     //Serializer.ToFile(project, path + $"{ProjectName}" + Project.Extension);
                     return path;

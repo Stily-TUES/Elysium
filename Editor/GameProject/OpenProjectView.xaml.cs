@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Editor.Editors;
+using Editor.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,10 +25,12 @@ namespace Editor.GameProject
         public OpenProjectView()
         {
             InitializeComponent();
+            
         }
         private void OpenRecentProject()
         {
-            var project = OpenProject.Open(recentProjectsList.SelectedItem as ProjectData);
+            
+            var project = OpenProject.Open(recentProjectsList.SelectedItem as RecentProjectElement);
             bool dialogResult = false;
             var window = Window.GetWindow(this);
             if (project != null)

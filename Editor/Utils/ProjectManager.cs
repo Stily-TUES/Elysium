@@ -1,0 +1,80 @@
+﻿using Editor.GameProject;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace Editor.Utils;
+
+public abstract class UndoRedo
+{
+    public Project Project { get; }
+    public string Desc { get; }
+    public abstract void Undo();
+    public abstract void Apply();
+    
+    public UndoRedo(Project project, string name)
+    {
+        Project = project;
+        Desc = name;
+
+    }
+}
+
+public class ProjectManager
+{
+    private readonly Stack<UndoRedo> _undoStack = new Stack<UndoRedo>();
+    private readonly Stack<UndoRedo> _redoStack = new Stack<UndoRedo>();
+    public Project Project { get; }
+    public string Path { get; }
+
+    public ProjectManager(Project project, string path) {
+        Project = project;
+        Path = path;
+    }
+
+    public void Reset()
+    {
+        _undoStack.Clear();
+        _redoStack.Clear();
+    }
+
+    public void Add(UndoRedo undoRedo)
+    {
+        undoRedo.Apply();
+        _undoStack.Push(undoRedo);
+        _redoStack.Clear();
+    }
+
+    public void Undo()
+    {
+        if (_undoStack.Count == 0) return;
+        var undo = _undoStack.Pop();
+        undo.Undo();
+        _redoStack.Push(undo);
+    }
+
+    public void Redo()
+    {
+        if (_redoStack.Count == 0) return;
+        var redo = _redoStack.Pop();
+        redo.Apply();
+        _undoStack.Push(redo);
+    }
+
+    public void Save()
+    {
+        Project.Save(Path);
+    }
+    public static ProjectManager Load(string path)
+    {
+        var project = Project.Load(path);
+        return new ProjectManager(project, path);
+    }
+
+}

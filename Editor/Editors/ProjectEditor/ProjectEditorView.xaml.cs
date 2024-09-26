@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Editor.GameProject;
+using Editor.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,26 @@ namespace Editor.Editors
     /// </summary>
     public partial class ProjectEditorView : UserControl
     {
+        public ProjectManager ProjectManager { get; set; }
         public ProjectEditorView()
         {
+
             InitializeComponent();
         }
+
+        public ProjectEditorView(ProjectManager projectManager)
+        {
+            InitializeComponent();
+            ProjectManager = projectManager;
+           
+        }
+
+        public void LoadProjectManager(ProjectManager projectManager)
+        {
+            ProjectManager = projectManager;
+            test.ProjectManager = projectManager;
+        }
+
+
     }
 }
