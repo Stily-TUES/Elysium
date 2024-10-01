@@ -16,20 +16,49 @@ namespace Editor.GameProject;
 public class RecentProjectElement
 {
     [DataMember]
-    public string ProjectPath { get; set; }
+    public string FullPath { get; set; }
     [DataMember]
     public DateTime Date { get; set; }
     public byte[] Icon { get; set; }
     public byte[] Screenshot { get; set; }
-    //public string FullPath { get => $"{ProjectPath}{Name}{Project.Extension}"; }
+    public ProjectMetadata Metadata { get; set; }
+
+    public void Load()
+    {
+        if (File.Exists(FullPath))
+        {
+            var project = Serializer.FromFile<Project>(FullPath);
+            Metadata = new ProjectMetadata
+            {
+                IconPath = project.IconPath,
+                ScreenshotPath = project.ScreenshotPath,
+                Name = project.Name
+            };
+        }
+    }
 }
 [DataContract]
 public class ProjectDataList
 {
     [DataMember]
     public List<RecentProjectElement> Projects { get; set; }
+    public ProjectDataList Load()
+    {
+        Projects.ForEach(x => x.Load());
+        return this;
+    }
 }
-public class HollowProject {  }
+
+[DataContract]
+public class ProjectMetadata
+{
+    [DataMember]
+    public string Name { get; set; }
+    [DataMember]
+    public string IconPath { get; set; }
+    [DataMember]
+    public string ScreenshotPath { get; set; }
+}
 public class OpenProject
 {
     private static readonly string _appDataPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\ElysiumEditor\";
@@ -38,7 +67,6 @@ public class OpenProject
     public static ReadOnlyObservableCollection<RecentProjectElement> Projects { get; }
 
    
-
     static OpenProject()
     {
         try
@@ -58,14 +86,23 @@ public class OpenProject
     {
         if (File.Exists(_projectDataPath))
         {
-            var projects = Serializer.FromFile<ProjectDataList>(_projectDataPath).Projects.OrderByDescending(x => x.Date);
+            var projects = Serializer.FromFile<ProjectDataList>(_projectDataPath).Load().Projects.OrderByDescending(x => x.Date);
             _projects.Clear();
             foreach (var project in projects)
             {
                 if (File.Exists(project.FullPath))
                 {
-                    project.Icon = File.ReadAllBytes($@"{project.ProjectPath}\.elysium\icon.png");
-                    project.Screenshot = File.ReadAllBytes($@"{project.ProjectPath}\.elysium\screenshot.png");
+                    if (project.Metadata != null)
+                    {
+                        if (!string.IsNullOrEmpty(project.Metadata.IconPath) && File.Exists(project.Metadata.IconPath))
+                        {
+                            project.Icon = File.ReadAllBytes(project.Metadata.IconPath);
+                        }
+                        if (!string.IsNullOrEmpty(project.Metadata.ScreenshotPath) && File.Exists(project.Metadata.ScreenshotPath))
+                        {
+                            project.Screenshot = File.ReadAllBytes(project.Metadata.ScreenshotPath);
+                        }
+                    }
                     _projects.Add(project);
                 }
             }
@@ -78,21 +115,15 @@ public class OpenProject
         Serializer.ToFile(new ProjectDataList() { Projects = projects}, _projectDataPath);
     }
 
-    public static Project Open(RecentProjectElement projectData)
+    public static Project Open(RecentProjectElement project)
     {
         ReadProjectData();
-        var project = _projects.FirstOrDefault(x => x.FullPath == projectData.FullPath);
-        if (project != null)
+        if (!_projects.Contains(project))
         {
-            project.Date = DateTime.Now;
-        }
-        else 
-        { 
-            project = projectData;
-            project.Date = DateTime.Now;
-
             _projects.Add(project);
         }
+        project.Date = DateTime.Now;
+
         WriteProjectData();
 
         return Project.Load(project.FullPath);

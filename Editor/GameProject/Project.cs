@@ -16,17 +16,15 @@ using System.Windows.Input;
 namespace Editor.GameProject;
 
 [DataContract]
-public class Project
+public class Project : ProjectMetadata
 {
-    public static string Extension {get;} = ".elysium";
-    [DataMember]
-    public string Name { get; set;} = "New Project";
+    public static string Extension => ".elysium";
 
     [DataMember(Name = "Scenes")]
     public Dictionary<string, Scene> Scenes = new Dictionary<string, Scene>();
 
     public static Project CurrentLoadedProject => Application.Current.MainWindow.DataContext as Project; 
-
+    
     public static void Unload()
     {
 
@@ -57,7 +55,7 @@ public class Project
     //    if (_scenes != null)
     //    {
     //        Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
-            
+
     //    }
 
     //    foreach (var scene in Scenes)
@@ -69,6 +67,21 @@ public class Project
     //        }
     //    }
     //}
+    [OnDeserialized]
+    private void OnDeserialized(StreamingContext context)
+    {
+        // Ensure that the Scenes dictionary is not null
+        if (Scenes == null)
+        {
+            Scenes = new Dictionary<string, Scene>();
+        }
+
+        // Initialize other properties if needed
+        if (string.IsNullOrEmpty(Name))
+        {
+            Name = "Default Project Name"; // or any default value
+        }
+    }
 
     public Project(string name, string path)
     {

@@ -4,6 +4,9 @@ xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
 
 <Name>{0}</Name>
+<Path>{1}</Path>
+<IconPath>{2}</IconPath>
+<ScreenshotPath>{3}</ScreenshotPath>
 <Scenes>
 	<Scene z:Id="i2">
 		<Name>Default Scene</Name>

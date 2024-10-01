@@ -159,7 +159,8 @@ namespace Editor.GameProject
 
                     //var project = new Project(ProjectName, path);
                     //Serializer.ToFile(project, path + $"{ProjectName}" + Project.Extension);
-                    return path;
+                    //return "1";
+                    return projectPath;
                 }
                 catch (Exception e)
                 {
