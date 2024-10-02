@@ -20,14 +20,19 @@ public class Project : ProjectMetadata
 {
     public static string Extension => ".elysium";
 
-    [DataMember(Name = "Scenes")]
-    public Dictionary<string, Scene> Scenes = new Dictionary<string, Scene>();
+    private Dictionary<string, Scene> _scenes = new Dictionary<string, Scene>();
 
-    public static Project CurrentLoadedProject => Application.Current.MainWindow.DataContext as Project; 
-    
+    [DataMember(Name = "Scenes")]
+    public Dictionary<string, Scene> Scenes
+    {
+        get => _scenes;
+        set => _scenes = value;
+    }
+
+    public static Project CurrentLoadedProject => Application.Current.MainWindow.DataContext as Project;
+
     public static void Unload()
     {
-
     }
 
     public void Save(string path)
@@ -35,60 +40,15 @@ public class Project : ProjectMetadata
         Serializer.ToFile<Project>(this, path);
     }
 
-
     public static Project Load(string file)
     {
         Debug.Assert(File.Exists(file), "File does not exist");
         return Serializer.FromFile<Project>(file);
     }
 
-    //public static void Save(Project project)
-    //{
-    //    Serializer.ToFile<Project>(project, project.FullPath);
-    //}
-
-
-
-    //[OnDeserialized]
-    //private void OnDeserialized(StreamingContext context)
-    //{
-    //    if (_scenes != null)
-    //    {
-    //        Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
-
-    //    }
-
-    //    foreach (var scene in Scenes)
-    //    {
-    //        if (scene.isLoaded)
-    //        {
-    //            CurrentScene = scene;
-    //            break;
-    //        }
-    //    }
-    //}
-    [OnDeserialized]
-    private void OnDeserialized(StreamingContext context)
+    public Project(string name)
     {
-        // Ensure that the Scenes dictionary is not null
-        if (Scenes == null)
-        {
-            Scenes = new Dictionary<string, Scene>();
-        }
-
-        // Initialize other properties if needed
-        if (string.IsNullOrEmpty(Name))
-        {
-            Name = "Default Project Name"; // or any default value
-        }
-    }
-
-    public Project(string name, string path)
-    {
-
         this.Name = name;
-        
-        //_scenes.Add(new Scene(this, "Default Scene"));
-        //OnDeserialized(new StreamingContext());
+        this.Scenes = new Dictionary<string, Scene>();
     }
 }

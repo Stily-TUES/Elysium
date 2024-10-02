@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
         <Button Content="Add Scene" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="0" Margin="20, 0, 0, 0" Focusable="False" Click="OnAddSceneButton_Click"/>
         <StackPanel Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Scenes}">
+            <ItemsControl ItemsSource="{Binding Project.Scenes}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
@@ -21,14 +21,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Expander  IsExpanded="{Binding isLoaded, Mode=OneWay}">
+                        <Expander IsExpanded="{Binding isLoaded, Mode=OneWay}">
                             <Expander.Header>
                                 <Grid>
                                     <TextBlock Text="{Binding Name}" Margin="5"/>
                                 </Grid>
                             </Expander.Header>
                             <Border BorderBrush="lightGreen" BorderThickness="1" Margin="5" Height="50" Background="LightGreen"/>
-                               
                         </Expander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

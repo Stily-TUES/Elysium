@@ -115,18 +115,20 @@ public class OpenProject
         Serializer.ToFile(new ProjectDataList() { Projects = projects}, _projectDataPath);
     }
 
-    public static Project Open(RecentProjectElement project)
+    public static ProjectManager Open(RecentProjectElement project)
     {
         ReadProjectData();
-        if (!_projects.Contains(project))
+        var existingProject = _projects.FirstOrDefault(p => p.FullPath == project.FullPath);
+        if (existingProject != null)
         {
-            _projects.Add(project);
+            _projects.Remove(existingProject);
         }
+        _projects.Insert(0, project);
         project.Date = DateTime.Now;
 
         WriteProjectData();
 
-        return Project.Load(project.FullPath);
+        return ProjectManager.Load(project.FullPath);
     }
 
    

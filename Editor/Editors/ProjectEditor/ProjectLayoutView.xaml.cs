@@ -23,6 +23,7 @@ namespace Editor.Editors;
 public partial class ProjectLayoutView : UserControl
 {
     public ProjectManager ProjectManager { get; set; }
+
     public ProjectLayoutView()
     {
         InitializeComponent();
@@ -30,8 +31,11 @@ public partial class ProjectLayoutView : UserControl
 
     private void OnAddSceneButton_Click(object sender, RoutedEventArgs e)
     {
-        var PM = ProjectManager;
-        if (PM != null) PM.Add(new AddNewSceneCommand(PM.Project, "New Scene " + PM.Project.Scenes.Count));
-
+        if (ProjectManager != null)
+        {
+            var sceneName = "New Scene " + ProjectManager.Project.Scenes.Count;
+            var addSceneCommand = new AddNewSceneCommand(ProjectManager.Project, sceneName);
+            ProjectManager.Add(addSceneCommand);
+        }
     }
 }

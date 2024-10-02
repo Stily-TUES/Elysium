@@ -151,7 +151,7 @@ namespace Editor.GameProject
 
 
                     var projectXml = File.ReadAllText(template.ProjectPath);
-                    projectXml = string.Format(projectXml, ProjectName, ProjectPath);
+                    projectXml = string.Format(projectXml, ProjectName, ProjectPath, template.IconPath, template.ScreenshotPath);
                     var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{Project.Extension}"));
                     File.WriteAllText(projectPath, projectXml);
 
