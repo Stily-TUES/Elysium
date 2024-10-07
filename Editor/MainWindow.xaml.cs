@@ -20,18 +20,18 @@ namespace Editor
     {
         public MainWindow()
         {
+            OpenBrowsingDialog();
             InitializeComponent();
             Loaded += MainWindowLoaded;
             Closing += MainWindowClosing;
         }
 
-        private void MainWindowLoaded(object sender, RoutedEventArgs e)
+        private void MainWindowLoaded(object? sender, RoutedEventArgs e)
         {
             Loaded -= MainWindowLoaded;
-            OpenBrowsingDialog();
         }
 
-        private void MainWindowClosing(object sender, CancelEventArgs e)
+        private void MainWindowClosing(object? sender, CancelEventArgs e)
         {
             Closing -= MainWindowClosing;
             if (Project.CurrentLoadedProject != null)
