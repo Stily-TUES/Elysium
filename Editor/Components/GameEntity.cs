@@ -29,8 +29,7 @@ public class GameEntity : BaseViewModel
         }
     }
     [DataMember(Name = nameof(Components))]
-    private readonly ObservableCollection<Component> _components = new ObservableCollection<Component>();
-    public ReadOnlyObservableCollection<Component> Components {get; }
+    public ObservableCollection<Component> Components {get; }
     [DataMember]
     public Scene ParentScene { get; private set; }
     public GameEntity(Scene parentScene)

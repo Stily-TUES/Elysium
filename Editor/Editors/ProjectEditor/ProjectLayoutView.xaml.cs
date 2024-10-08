@@ -1,4 +1,5 @@
 ﻿using Editor.Commands;
+using Editor.GameProject;
 using Editor.Utils;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,32 @@ public partial class ProjectLayoutView : UserControl
                 var removeSceneCommand = new RemoveSceneCommand(ProjectManager.Project, sceneName);
                 ProjectManager.Add(removeSceneCommand);
             }
+        }
+    }
+
+    
+    private void OnAddEntityButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        ProjectManager = (ProjectManager)window.DataContext;
+        if (ProjectManager != null)
+        {
+            //var entityCount = ProjectManager.Project.Scenes.Sum(scene => scene.GameEntities.Count);
+            var entityName = "New Entity ";
+            var addEntityCommand = new AddGameEntityCommand(ProjectManager.Project, entityName);
+            ProjectManager.Add(addEntityCommand);
+        }
+    }
+    private void OnRemoveEntityButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        ProjectManager = (ProjectManager)window.DataContext;
+        if (ProjectManager != null)
+        {
+            var button = sender as Button;
+            var entityName = button?.Tag as string;
+            var removeGameEntityCommand = new RemoveGameEntityCommand(ProjectManager.Project, entityName);
+            ProjectManager.Add(removeGameEntityCommand);
         }
     }
 }

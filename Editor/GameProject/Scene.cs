@@ -45,15 +45,14 @@ public class Scene
         }
     }
 
-    [DataMember(Name = nameof(GameEntities))]
-    private readonly ObservableCollection<GameEntity> _gameEntities = new ObservableCollection<GameEntity>();
-    public ReadOnlyObservableCollection<GameEntity> GameEntities { get; }
+    [DataMember]
+    public ObservableCollection<GameEntity> GameEntities { get; set; }
     public Scene(Project project, string name)
     {
         Debug.Assert(project != null);
         this.Project = project;
         this.Name = name;
+        //GameEntities = new ObservableCollection<GameEntity>();
     }
     //TODO: implement game entities 
-    //private ObservableCollection<GameObject> _gameObjects = new ObservableCollection<GameObject>();
 }
