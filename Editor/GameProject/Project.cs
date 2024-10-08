@@ -20,14 +20,8 @@ public class Project : ProjectMetadata
 {
     public static string Extension => ".elysium";
 
-    private Dictionary<string, Scene> _scenes = new Dictionary<string, Scene>();
-
     [DataMember(Name = "Scenes")]
-    public Dictionary<string, Scene> Scenes
-    {
-        get => _scenes;
-        set => _scenes = value;
-    }
+    public ObservableCollection<Scene> Scenes { get; private set; }
 
     public static Project CurrentLoadedProject => Application.Current.MainWindow.DataContext as Project;
 
@@ -37,6 +31,7 @@ public class Project : ProjectMetadata
 
     public void Save(string path)
     {
+        
         Serializer.ToFile<Project>(this, path);
     }
 
@@ -49,6 +44,5 @@ public class Project : ProjectMetadata
     public Project(string name)
     {
         this.Name = name;
-        this.Scenes = new Dictionary<string, Scene>();
     }
 }

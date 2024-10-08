@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Editor.Common;
 
 namespace Editor.GameProject
@@ -26,7 +27,7 @@ namespace Editor.GameProject
                 }
             }
         }
-        [DataMember]
+        [XmlIgnore]
         public Project Project { get; private set; }
 
         public bool _isLoaded;

@@ -22,26 +22,28 @@ namespace Editor.Editors
     /// </summary>
     public partial class ProjectEditorView : UserControl
     {
-        public ProjectManager ProjectManager { get; set; }
         public ProjectEditorView()
         {
-
             InitializeComponent();
         }
 
-        public ProjectEditorView(ProjectManager projectManager)
+        private void onUndoButton_Click(object sender, RoutedEventArgs e)
         {
-            InitializeComponent();
-            ProjectManager = projectManager;
-           
+            var window = Window.GetWindow(this);
+            var projectManager = (ProjectManager)window.DataContext;
+            projectManager?.Undo();
         }
-
-        public void LoadProjectManager(ProjectManager projectManager)
+        private void onRedoButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectManager = projectManager;
-            test.ProjectManager = projectManager;
+            var window = Window.GetWindow(this);
+            var projectManager = (ProjectManager)window.DataContext;
+            projectManager?.Redo();
         }
-
-
+        private void onSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            var projectManager = (ProjectManager)window.DataContext;
+            projectManager?.Save();
+        }
     }
 }

@@ -31,6 +31,8 @@ public partial class ProjectLayoutView : UserControl
 
     private void OnAddSceneButton_Click(object sender, RoutedEventArgs e)
     {
+        var window = Window.GetWindow(this);
+        ProjectManager = (ProjectManager)window.DataContext;
         if (ProjectManager != null)
         {
             var sceneName = "New Scene " + ProjectManager.Project.Scenes.Count;
