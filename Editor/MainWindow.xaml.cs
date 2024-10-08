@@ -11,52 +11,51 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor
+namespace Editor;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            OpenBrowsingDialog();
-            InitializeComponent();
-            Loaded += MainWindowLoaded;
-            Closing += MainWindowClosing;
-        }
+        OpenBrowsingDialog();
+        InitializeComponent();
+        Loaded += MainWindowLoaded;
+        Closing += MainWindowClosing;
+    }
 
-        private void MainWindowLoaded(object? sender, RoutedEventArgs e)
-        {
-            Loaded -= MainWindowLoaded;
-        }
+    private void MainWindowLoaded(object? sender, RoutedEventArgs e)
+    {
+        Loaded -= MainWindowLoaded;
+    }
 
-        private void MainWindowClosing(object? sender, CancelEventArgs e)
+    private void MainWindowClosing(object? sender, CancelEventArgs e)
+    {
+        Closing -= MainWindowClosing;
+        if (Project.CurrentLoadedProject != null)
         {
-            Closing -= MainWindowClosing;
+            Project.Unload();
+        }
+    }
+
+    private void OpenBrowsingDialog()
+    {
+        var browsingDialog = new BrowsingDialog();
+
+        if (browsingDialog.ShowDialog() == false || browsingDialog.DataContext == null)
+        {
+            Application.Current.Shutdown();
+        }
+        else
+        {
             if (Project.CurrentLoadedProject != null)
             {
                 Project.Unload();
             }
+            DataContext = browsingDialog.DataContext;
         }
-
-        private void OpenBrowsingDialog()
-        {
-            var browsingDialog = new BrowsingDialog();
-
-            if (browsingDialog.ShowDialog() == false || browsingDialog.DataContext == null)
-            {
-                Application.Current.Shutdown();
-            }
-            else
-            {
-                if (Project.CurrentLoadedProject != null)
-                {
-                    Project.Unload();
-                }
-                DataContext = browsingDialog.DataContext;
-            }
-        }
-
     }
+
 }

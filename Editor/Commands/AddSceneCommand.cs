@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace Editor.Commands;
 
-public class AddNewSceneCommand : UndoRedo
+public class AddSceneCommand : UndoRedo
 {
     public string Name { get; }
 
@@ -32,7 +32,7 @@ public class AddNewSceneCommand : UndoRedo
         }
     }
 
-    public AddNewSceneCommand(Project project, string name) : base(project, $"Add Scene {name}")
+    public AddSceneCommand(Project project, string name) : base(project, $"Add Scene {name}")
     {
         Name = name;
     }

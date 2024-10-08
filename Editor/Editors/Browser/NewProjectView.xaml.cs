@@ -13,32 +13,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor.GameProject
-{
-    /// <summary>
-    /// Interaction logic for NewProjectView.xaml
-    /// </summary>
-    public partial class NewProjectView : UserControl
-    {
-        public NewProjectView()
-        {
-            InitializeComponent();
-        }
+namespace Editor.GameProject;
 
-        private void OnCreateButton_Click(object sender, RoutedEventArgs e)
+/// <summary>
+/// Interaction logic for NewProjectView.xaml
+/// </summary>
+public partial class NewProjectView : UserControl
+{
+    public NewProjectView()
+    {
+        InitializeComponent();
+    }
+
+    private void OnCreateButton_Click(object sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as NewProject;
+        var projectPath = vm.CreateProject((ProjectTemplate)templateListBox.SelectedItem);
+        bool dialogResult = false;
+        var window = Window.GetWindow(this);
+        if(!string.IsNullOrEmpty(projectPath))
         {
-            var vm = DataContext as NewProject;
-            var projectPath = vm.CreateProject((ProjectTemplate)templateListBox.SelectedItem);
-            bool dialogResult = false;
-            var window = Window.GetWindow(this);
-            if(!string.IsNullOrEmpty(projectPath))
-            {
-                dialogResult = true;
-                var project = OpenProject.Open(new RecentProjectElement() { Date = new DateTime(), FullPath = projectPath });
-                window.DataContext = project;
-            }
-            window.DialogResult = dialogResult;
-            window.Close();
+            dialogResult = true;
+            var project = OpenProject.Open(new RecentProjectElement() { Date = new DateTime(), FullPath = projectPath });
+            window.DataContext = project;
         }
+        window.DialogResult = dialogResult;
+        window.Close();
     }
 }

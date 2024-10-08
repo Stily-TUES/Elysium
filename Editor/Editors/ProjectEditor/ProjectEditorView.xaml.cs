@@ -15,35 +15,34 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor.Editors
-{
-    /// <summary>
-    /// Interaction logic for ProjectEditorView.xaml
-    /// </summary>
-    public partial class ProjectEditorView : UserControl
-    {
-        public ProjectEditorView()
-        {
-            InitializeComponent();
-        }
+namespace Editor.Editors;
 
-        private void onUndoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = Window.GetWindow(this);
-            var projectManager = (ProjectManager)window.DataContext;
-            projectManager?.Undo();
-        }
-        private void onRedoButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = Window.GetWindow(this);
-            var projectManager = (ProjectManager)window.DataContext;
-            projectManager?.Redo();
-        }
-        private void onSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = Window.GetWindow(this);
-            var projectManager = (ProjectManager)window.DataContext;
-            projectManager?.Save();
-        }
+/// <summary>
+/// Interaction logic for ProjectEditorView.xaml
+/// </summary>
+public partial class ProjectEditorView : UserControl
+{
+    public ProjectEditorView()
+    {
+        InitializeComponent();
+    }
+
+    private void onUndoButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        var projectManager = (ProjectManager)window.DataContext;
+        projectManager?.Undo();
+    }
+    private void onRedoButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        var projectManager = (ProjectManager)window.DataContext;
+        projectManager?.Redo();
+    }
+    private void onSaveButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        var projectManager = (ProjectManager)window.DataContext;
+        projectManager?.Save();
     }
 }

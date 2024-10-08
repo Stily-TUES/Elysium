@@ -12,37 +12,36 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Editor.GameProject
+namespace Editor.GameProject;
+
+/// <summary>
+/// Interaction logic for BrowsingDialog.xaml
+/// </summary>
+public partial class BrowsingDialog : Window
 {
-    /// <summary>
-    /// Interaction logic for BrowsingDialog.xaml
-    /// </summary>
-    public partial class BrowsingDialog : Window
+    public BrowsingDialog()
     {
-        public BrowsingDialog()
+        InitializeComponent();
+    }
+    private void OnProjectButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender == openProjectButton)
         {
-            InitializeComponent();
+            if (newProjectButton.IsChecked == true)
+            {
+                newProjectButton.IsChecked = false;
+                BrowserContent.Margin = new Thickness(0);
+            }
+            openProjectButton.IsChecked = true;
         }
-        private void OnProjectButton_Click(object sender, RoutedEventArgs e)
+        else
         {
-            if (sender == openProjectButton)
+            if (openProjectButton.IsChecked == true)
             {
-                if (newProjectButton.IsChecked == true)
-                {
-                    newProjectButton.IsChecked = false;
-                    BrowserContent.Margin = new Thickness(0);
-                }
-                openProjectButton.IsChecked = true;
+                openProjectButton.IsChecked = false;
+                BrowserContent.Margin = new Thickness(-800, 0, 0, 0);
             }
-            else
-            {
-                if (openProjectButton.IsChecked == true)
-                {
-                    openProjectButton.IsChecked = false;
-                    BrowserContent.Margin = new Thickness(-800, 0, 0, 0);
-                }
-                newProjectButton.IsChecked = true;
-            }
+            newProjectButton.IsChecked = true;
         }
     }
 }

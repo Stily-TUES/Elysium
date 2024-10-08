@@ -6,17 +6,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor.Common
+namespace Editor.Common;
+
+[DataContract(IsReference = true)]
+public class BaseViewModel : INotifyPropertyChanged
 {
-    [DataContract(IsReference = true)]
-    public class BaseViewModel : INotifyPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
 }

@@ -36,8 +36,24 @@ public partial class ProjectLayoutView : UserControl
         if (ProjectManager != null)
         {
             var sceneName = "New Scene " + ProjectManager.Project.Scenes.Count;
-            var addSceneCommand = new AddNewSceneCommand(ProjectManager.Project, sceneName);
+            var addSceneCommand = new AddSceneCommand(ProjectManager.Project, sceneName);
             ProjectManager.Add(addSceneCommand);
+        }
+    }
+
+    private void OnRemoveSceneButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = Window.GetWindow(this);
+        ProjectManager = (ProjectManager)window.DataContext;
+        if (ProjectManager != null)
+        {
+            var button = sender as Button;
+            var sceneName = button?.Tag as string;
+            if (!string.IsNullOrEmpty(sceneName))
+            {
+                var removeSceneCommand = new RemoveSceneCommand(ProjectManager.Project, sceneName);
+                ProjectManager.Add(removeSceneCommand);
+            }
         }
     }
 }

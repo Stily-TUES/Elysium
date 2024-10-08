@@ -15,37 +15,36 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor.GameProject
+namespace Editor.GameProject;
+
+/// <summary>
+/// Interaction logic for OpenProjectView.xaml
+/// </summary>
+public partial class OpenProjectView : UserControl
 {
-    /// <summary>
-    /// Interaction logic for OpenProjectView.xaml
-    /// </summary>
-    public partial class OpenProjectView : UserControl
+    public OpenProjectView()
     {
-        public OpenProjectView()
-        {
-            InitializeComponent();
-            
-        }
-        private void OpenRecentProject()
-        {
-            
-            var project = OpenProject.Open(recentProjectsList.SelectedItem as RecentProjectElement);
-            bool dialogResult = false;
-            var window = Window.GetWindow(this);
-            if (project != null)
-            {
-                dialogResult = true;
-                window.DataContext = project;
-            }
-            window.DialogResult = dialogResult;
-            window.Close();
-        }
-
-        private void OnOpenProjectButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenRecentProject();
-        }
-
+        InitializeComponent();
+        
     }
+    private void OpenRecentProject()
+    {
+        
+        var project = OpenProject.Open(recentProjectsList.SelectedItem as RecentProjectElement);
+        bool dialogResult = false;
+        var window = Window.GetWindow(this);
+        if (project != null)
+        {
+            dialogResult = true;
+            window.DataContext = project;
+        }
+        window.DialogResult = dialogResult;
+        window.Close();
+    }
+
+    private void OnOpenProjectButton_Click(object sender, RoutedEventArgs e)
+    {
+        OpenRecentProject();
+    }
+
 }
