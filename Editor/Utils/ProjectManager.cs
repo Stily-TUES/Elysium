@@ -56,6 +56,12 @@ public class ProjectManager
     {
         Project.Save(Path);
     }
+
+    public Scene GetActiveScene()
+    {
+        return Project.Scenes.FirstOrDefault(scene => scene.isLoaded);
+    }
+
     public static ProjectManager Load(string path)
     {
         var project = Project.Load(path);

@@ -58,17 +58,20 @@ public partial class ProjectLayoutView : UserControl
         }
     }
 
-    
+
     private void OnAddEntityButton_Click(object sender, RoutedEventArgs e)
     {
         var window = Window.GetWindow(this);
         ProjectManager = (ProjectManager)window.DataContext;
         if (ProjectManager != null)
         {
-            //var entityCount = ProjectManager.Project.Scenes.Sum(scene => scene.GameEntities.Count);
-            var entityName = "New Entity ";
-            var addEntityCommand = new AddGameEntityCommand(ProjectManager.Project, entityName);
-            ProjectManager.Add(addEntityCommand);
+            var activeScene = ProjectManager.GetActiveScene();
+            if (activeScene != null)
+            {
+                var entityName = "New Entity ";
+                var addEntityCommand = new AddGameEntityCommand(ProjectManager.Project, entityName, activeScene);
+                ProjectManager.Add(addEntityCommand);
+            }
         }
     }
     private void OnRemoveEntityButton_Click(object sender, RoutedEventArgs e)
@@ -79,8 +82,12 @@ public partial class ProjectLayoutView : UserControl
         {
             var button = sender as Button;
             var entityName = button?.Tag as string;
-            var removeGameEntityCommand = new RemoveGameEntityCommand(ProjectManager.Project, entityName);
-            ProjectManager.Add(removeGameEntityCommand);
+            var activeScene = ProjectManager.GetActiveScene();
+            if (activeScene != null && !string.IsNullOrEmpty(entityName))
+            {
+                var removeGameEntityCommand = new RemoveGameEntityCommand(ProjectManager.Project, entityName, activeScene);
+                ProjectManager.Add(removeGameEntityCommand);
+            }
         }
     }
 }

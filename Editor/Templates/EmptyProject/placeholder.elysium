@@ -8,9 +8,11 @@ xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
 <ScreenshotPath>{3}</ScreenshotPath>
 <Scenes>
 	<Scene z:Id="i2">
+		<GameEntities></GameEntities>
 		<Name>Default Scene</Name>
 		<Project z:Ref="i1"/>
 		<isLoaded>true</isLoaded>
+		
 	</Scene>
 </Scenes>
 </Project>
