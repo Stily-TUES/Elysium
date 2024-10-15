@@ -54,5 +54,4 @@ public class Scene
         this.Name = name;
         //GameEntities = new ObservableCollection<GameEntity>();
     }
-    //TODO: implement game entities 
 }

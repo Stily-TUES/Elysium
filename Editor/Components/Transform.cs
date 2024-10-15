@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Editor.Components;
 
+//interface ITransform
+//{
+//    Matrix4x4 GetMatrix();
+//}
+
 [DataContract]
 class Transform : Component
 {

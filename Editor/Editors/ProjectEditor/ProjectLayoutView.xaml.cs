@@ -68,7 +68,7 @@ public partial class ProjectLayoutView : UserControl
             var activeScene = ProjectManager.GetActiveScene();
             if (activeScene != null)
             {
-                var entityName = "New Entity ";
+                var entityName = "New Entity " + activeScene.GameEntities.Count;
                 var addEntityCommand = new AddGameEntityCommand(ProjectManager.Project, entityName, activeScene);
                 ProjectManager.Add(addEntityCommand);
             }
