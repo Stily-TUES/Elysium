@@ -28,12 +28,19 @@ public class RecentProjectElement
         if (File.Exists(FullPath))
         {
             var project = Serializer.FromFile<Project>(FullPath);
-            Metadata = new ProjectMetadata
+            if (project != null)
             {
-                IconPath = project.IconPath,
-                ScreenshotPath = project.ScreenshotPath,
-                Name = project.Name
-            };
+                Metadata = new ProjectMetadata
+                {
+                    IconPath = project.IconPath,
+                    ScreenshotPath = project.ScreenshotPath,
+                    Name = project.Name
+                };
+            }
+            else
+            {
+                Debug.WriteLine("Failed to load project from file.");
+            }
         }
     }
 }

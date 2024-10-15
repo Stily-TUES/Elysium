@@ -17,6 +17,7 @@ namespace Editor.Components;
 class Transform : Component
 {
     private Vector3 _position;
+    [DataMember]
     public Vector3 Position
     {
         get => _position;
@@ -31,6 +32,7 @@ class Transform : Component
     }
 
     private Vector3 _rotation;
+    [DataMember]
     public Vector3 Rotation
     {
         get => _rotation;
@@ -44,6 +46,7 @@ class Transform : Component
         }
     }
     private Vector3 _scale;
+    [DataMember]
     public Vector3 Scale
     {
         get => _scale;

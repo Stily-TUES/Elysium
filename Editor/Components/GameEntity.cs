@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Editor.Components;
 
 [DataContract]
+[KnownType(typeof(Transform))]
 public class GameEntity : BaseViewModel
 {
     private string _name;
@@ -29,13 +30,14 @@ public class GameEntity : BaseViewModel
         }
     }
     [DataMember(Name = nameof(Components))]
-    public ObservableCollection<Component> Components {get; }
-    [DataMember]
+    public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
+    [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
     public GameEntity(Scene parentScene)
     {
         Debug.Assert(parentScene != null);
         ParentScene = parentScene;
+        Components.Add(new Transform(this));
     }
 
 }

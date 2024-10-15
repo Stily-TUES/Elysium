@@ -1,4 +1,5 @@
 ﻿using Editor.Editors;
+using Editor.GameProject;
 using Editor.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Editor.GameProject;
+namespace Editor.Editors;
 
 /// <summary>
 /// Interaction logic for OpenProjectView.xaml
@@ -29,7 +30,6 @@ public partial class OpenProjectView : UserControl
     }
     private void OpenRecentProject()
     {
-        
         var project = OpenProject.Open(recentProjectsList.SelectedItem as RecentProjectElement);
         bool dialogResult = false;
         var window = Window.GetWindow(this);

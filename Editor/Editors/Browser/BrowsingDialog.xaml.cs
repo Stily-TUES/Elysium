@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Editor.GameProject;
+namespace Editor.Editors;
 
 /// <summary>
 /// Interaction logic for BrowsingDialog.xaml
