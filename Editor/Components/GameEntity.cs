@@ -29,15 +29,20 @@ public class GameEntity : BaseViewModel
             }
         }
     }
-    [DataMember(Name = nameof(Components))]
-    public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
+
+    //[DataMember]
+    //public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
+    [DataMember]
+    public Transform Transform { get; set; }
     [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
+
     public GameEntity(Scene parentScene)
     {
         Debug.Assert(parentScene != null);
         ParentScene = parentScene;
-        Components.Add(new Transform(this));
+        Transform = new Transform(this);
+        //Components.Add(new Transform(this));
     }
 
 }
