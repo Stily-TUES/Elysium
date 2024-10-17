@@ -81,13 +81,27 @@ public partial class ProjectLayoutView : UserControl
         if (ProjectManager != null)
         {
             var button = sender as Button;
-            var entityName = button?.Tag as string;
+            var entityId = (int)button?.Tag;
             var activeScene = ProjectManager.GetActiveScene();
-            if (activeScene != null && !string.IsNullOrEmpty(entityName))
+            if (activeScene != null && entityId != 0)
             {
-                var removeGameEntityCommand = new RemoveGameEntityCommand(ProjectManager.Project, entityName, activeScene);
+                var removeGameEntityCommand = new RemoveGameEntityCommand(ProjectManager.Project, entityId, activeScene);
                 ProjectManager.Add(removeGameEntityCommand);
             }
+        }
+    }
+
+    private void ListBoxEntities_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var listBox = sender as ListBox;
+        if (listBox != null && listBox.SelectedItems.Count > 0)
+        {
+            var entity = listBox.SelectedItems[0];
+            ProjectComponentView.Instance.DataContext = entity;
+        }
+        else if (listBox != null)
+        {
+            ProjectComponentView.Instance.DataContext = null;
         }
     }
 }

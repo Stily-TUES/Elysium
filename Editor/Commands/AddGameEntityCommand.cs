@@ -28,11 +28,8 @@ public class AddGameEntityCommand : UndoRedo
         _addedEntity = new GameEntity(_parentScene) { Name = EntityName };
         _parentScene.GameEntities.Add(_addedEntity);
     }
-
     public override void Undo()
     {
-        Debug.Assert(_parentScene.GameEntities.Any(e => e.Name == EntityName));
-
         if (_addedEntity != null)
         {
             _parentScene.GameEntities.Remove(_addedEntity);

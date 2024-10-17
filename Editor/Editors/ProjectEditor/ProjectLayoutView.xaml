@@ -34,12 +34,12 @@
                                     <Button Content="Аdd entity" Click="OnAddEntityButton_Click" Grid.Column="2" IsEnabled="{Binding isLoaded}"/>
                                 </Grid>
                             </Expander.Header>
-                            <ListBox ItemsSource="{Binding GameEntities}" IsEnabled="{Binding isLoaded}" SelectionMode="Extended" Background="#2a2f38" >
+                            <ListBox ItemsSource="{Binding GameEntities}" IsEnabled="{Binding isLoaded}" SelectionMode="Extended" Background="#2a2f38" SelectionChanged="ListBoxEntities_SelectionChanged">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" Background="#2a2f38">
                                             <TextBlock Text="{Binding Name}" Margin="5" Foreground="White"/>
-                                            <Button Content="Remove" Tag="{Binding Name}" Click="OnRemoveEntityButton_Click"/>
+                                            <Button Content="Remove" Tag="{Binding EntityId}" Click="OnRemoveEntityButton_Click"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

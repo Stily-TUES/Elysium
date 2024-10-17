@@ -40,9 +40,9 @@ public class Project : ProjectMetadata
         Debug.Assert(File.Exists(file), "File does not exist");
         return Serializer.FromFile<Project>(file);
     }
-
-    public Project(string name)
+    public void Rename(string newName)
     {
-        this.Name = name;
+        Name = newName;
     }
+
 }
