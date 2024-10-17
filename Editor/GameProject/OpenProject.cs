@@ -1,4 +1,5 @@
-﻿using Editor.Utils;
+﻿using Editor.Common;
+using Editor.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,7 +51,7 @@ public class ProjectDataList
 }
 
 [DataContract]
-public class ProjectMetadata
+public class ProjectMetadata : BaseViewModel
 {
     [DataMember]
     public string Name { get; set; }

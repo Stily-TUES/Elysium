@@ -26,11 +26,11 @@ public class RenameCommand : UndoRedo
 
     public override void Apply()
     {
-        _item.Name = _newName;
+        _item.Rename(_newName);
     }
 
     public override void Undo()
     {
-        _item.Name = _oldName;
+        _item.Rename(_oldName);
     }
 }

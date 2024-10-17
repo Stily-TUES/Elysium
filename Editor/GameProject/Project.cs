@@ -43,6 +43,7 @@ public class Project : ProjectMetadata
     public void Rename(string newName)
     {
         Name = newName;
+        OnPropertyChanged(nameof(Name));
     }
 
 }
