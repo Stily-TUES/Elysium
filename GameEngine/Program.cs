@@ -1,61 +1,113 @@
-﻿using System;
-using GLFW;
+﻿using GLFW;
 using static OpenGL.GL;
+using static OpenGL.GLFW;
+using System.Numerics;
+namespace GameEngine;
 
-class Program
+
+public static class MainClass
 {
-
-    /// <summary>
-    /// Obligatory name for your first OpenGL example program.
-    /// </summary>
-    private const string TITLE = "Hello Triangle!";
+    private const string TITLE = "test!";
 
     static void Main(string[] args)
     {
-        // Set context creation hints
+        var window = CreateWindow(800, 600);
         PrepareContext();
-        // Create a window and shader program
-        var window = CreateWindow(1024, 800);
-        var program = CreateProgram();
 
-        // Define a simple triangle
-        CreateVertices(out var vao, out var vbo);
-        rand = new Random();
+        uint shaderProgram = SetupShaders();
 
-        var location = glGetUniformLocation(program, "color");
-        SetRandomColor(location);
-        long n = 0;
+        float[] vertices = {
+                0.5f,  0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                -0.5f, -0.5f, 0.0f,
+                -0.5f,  0.5f, 0.0f
+            };
+        uint[] indices = {
+                0, 1, 3,
+                1, 2, 3
+            };
+
+        uint VAO, VBO, EBO;
+        CreateVertices(out VAO, out VBO, out EBO, vertices, indices);
+
+
 
         while (!Glfw.WindowShouldClose(window))
         {
-            // Swap fore/back framebuffers, and poll for operating system events.
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            glUseProgram(shaderProgram);
+
+            Matrix4x4 view = Matrix4x4.CreateLookAt(new Vector3(0, 0, 3), Vector3.Zero, Vector3.UnitY);
+            Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView((float)ToRadians(45), 800f / 600f, 0.1f, 100f);
+
+            int modelLoc = glGetUniformLocation(shaderProgram, "model");
+            int viewLoc = glGetUniformLocation(shaderProgram, "view");
+            int projLoc = glGetUniformLocation(shaderProgram, "projection");
+
+            unsafe
+            {
+                glUniformMatrix4fv(viewLoc, 1, false, (float*)Unsafe.AsPointer(ref view));
+                glUniformMatrix4fv(projLoc, 1, false, (float*)Unsafe.AsPointer(ref projection));
+            }
+
+            foreach (var entity in activeScene.GameEntities)
+            {
+                var transform = entity.Transform;
+                Matrix4x4 model = Matrix4x4.CreateTranslation(transform.Position) *
+                                  Matrix4x4.CreateRotationX(transform.Rotation.X) *
+                                  Matrix4x4.CreateRotationY(transform.Rotation.Y) *
+                                  Matrix4x4.CreateRotationZ(transform.Rotation.Z) *
+                                  Matrix4x4.CreateScale(transform.Scale);
+
+                unsafe
+                {
+                    glUniformMatrix4fv(modelLoc, 1, false, (float*)Unsafe.AsPointer(ref model));
+                }
+
+                glBindVertexArray(entity.VAO);
+                glDrawElements(GL_TRIANGLES, entity.Indices.Length, GL_UNSIGNED_INT, IntPtr.Zero);
+            }
+
             Glfw.SwapBuffers(window);
             Glfw.PollEvents();
-
-            // Clear the framebuffer to defined background color
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            if (n++ % 600 == 0)
-                SetRandomColor(location);
-
-            // Draw the triangle.
-            glDrawArrays(GL_TRIANGLES, 0, 3);
         }
-
-        Glfw.Terminate();
     }
 
-    private static void SetRandomColor(int location)
+    public static double ToRadians(this double val)
     {
-        var r = (float)rand.NextDouble();
-        var g = (float)rand.NextDouble();
-        var b = (float)rand.NextDouble();
-        glUniform3f(location, r, g, b);
+        return Math.PI / 180 * val;
+    }
+
+    private static unsafe void CreateVertices(out uint VAO, out uint VBO, out uint EBO, float[] vertices, uint[] indices)
+    {
+        VAO = glGenVertexArray();
+        VBO = glGenBuffer();
+        EBO = glGenBuffer();
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        fixed (float* verticesPtr = vertices)
+        {
+            glBufferData(GL_ARRAY_BUFFER, vertices.Length * sizeof(float), (IntPtr)verticesPtr, GL_STATIC_DRAW);
+        }
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+        fixed (uint* indicesPtr = indices)
+        {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.Length * sizeof(uint), (IntPtr)indicesPtr, GL_STATIC_DRAW);
+        }
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), IntPtr.Zero);
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     private static void PrepareContext()
     {
-        // Set some common hints for the OpenGL profile creation
         Glfw.WindowHint(Hint.ClientApi, ClientApi.OpenGL);
         Glfw.WindowHint(Hint.ContextVersionMajor, 3);
         Glfw.WindowHint(Hint.ContextVersionMinor, 3);
@@ -64,18 +116,10 @@ class Program
         Glfw.WindowHint(Hint.Decorated, true);
     }
 
-    /// <summary>
-    /// Creates and returns a handle to a GLFW window with a current OpenGL context.
-    /// </summary>
-    /// <param name="width">The width of the client area, in pixels.</param>
-    /// <param name="height">The height of the client area, in pixels.</param>
-    /// <returns>A handle to the created window.</returns>
     private static Window CreateWindow(int width, int height)
     {
-        // Create window, make the OpenGL context current on the thread, and import graphics functions
         var window = Glfw.CreateWindow(width, height, TITLE, GLFW.Monitor.None, Window.None);
 
-        // Center window
         var screen = Glfw.PrimaryMonitor.WorkArea;
         var x = (screen.Width - width) / 2;
         var y = (screen.Height - height) / 2;
@@ -84,89 +128,75 @@ class Program
         Glfw.MakeContextCurrent(window);
         Import(Glfw.GetProcAddress);
 
-
-
         return window;
     }
 
-    /// <summary>
-    /// Creates an extremely basic shader program that is capable of displaying a triangle on screen.
-    /// </summary>
-    /// <returns>The created shader program. No error checking is performed for this basic example.</returns>
-    private static uint CreateProgram()
+    private static uint SetupShaders()
     {
-        var vertex = CreateShader(GL_VERTEX_SHADER, @"#version 330 core
-                                                    layout (location = 0) in vec3 pos;
+        const string FragmentShaderSource = "#version 330 core\n" +
+                                            "out vec4 FragColor;\n" +
+                                            "in vec2 TexCoord;\n" +
+                                            "uniform sampler2D texture1;\n" +
+                                            "void main()\n" +
+                                            "{\n" +
+                                            "   FragColor = texture(texture1, TexCoord);\n" +
+                                            "}\0";
+        const string VertexShaderSource = "#version 330 core\n" +
+                                          "layout(location = 0) in vec3 aPos;\n" +
+                                          "layout(location = 1) in vec2 aTexCoord;\n" +
+                                          "out vec2 TexCoord;\n" +
+                                          "uniform mat4 projection;\n" +
+                                          "uniform mat4 view;\n" +
+                                          "uniform mat4 model;\n" +
+                                          "void main()\n" +
+                                          "{\n" +
+                                          "   gl_Position = projection * view * model * vec4(aPos, 1.0f);\n" +
+                                          "   TexCoord = aTexCoord;\n" +
+                                          "}\0";
 
-                                                    void main()
-                                                    {
-                                                        gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-                                                    }");
-        var fragment = CreateShader(GL_FRAGMENT_SHADER, @"#version 330 core
-                                                        out vec4 result;
+        uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, VertexShaderSource);
+        glCompileShader(vertexShader);
+        //CheckShaderCompileStatus(vertexShader);
 
-                                                        uniform vec3 color;
+        uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, FragmentShaderSource);
+        glCompileShader(fragmentShader);
+        //CheckShaderCompileStatus(fragmentShader);
 
-                                                        void main()
-                                                        {
-                                                            result = vec4(color, 1.0);
-                                                        } ");
+        uint shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+        //CheckProgramLinkStatus(shaderProgram);
 
-        var program = glCreateProgram();
-        glAttachShader(program, vertex);
-        glAttachShader(program, fragment);
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
 
-        glLinkProgram(program);
-
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-
-        glUseProgram(program);
-        return program;
+        return shaderProgram;
     }
 
-    /// <summary>
-    /// Creates a shader of the specified type from the given source string.
-    /// </summary>
-    /// <param name="type">An OpenGL enum for the shader type.</param>
-    /// <param name="source">The source code of the shader.</param>
-    /// <returns>The created shader. No error checking is performed for this basic example.</returns>
-    private static uint CreateShader(int type, string source)
-    {
-        var shader = glCreateShader(type);
-        glShaderSource(shader, source);
-        glCompileShader(shader);
-        return shader;
-    }
+    //private static void CheckShaderCompileStatus(uint shader)
+    //{
+    //    int success;
+    //    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    //    if (success == 0)
+    //    {
+    //        byte[] infoLog = new byte[512];
+    //        glGetShaderInfoLog(shader, 512, null, infoLog);
+    //        Console.WriteLine("ERROR::SHADER::COMPILATION_FAILED\n" + System.Text.Encoding.UTF8.GetString(infoLog));
+    //    }
+    //}
 
-    /// <summary>
-    /// Creates a VBO and VAO to store the vertices for a triangle.
-    /// </summary>
-    /// <param name="vao">The created vertex array object for the triangle.</param>
-    /// <param name="vbo">The created vertex buffer object for the triangle.</param>
-    private static unsafe void CreateVertices(out uint vao, out uint vbo)
-    {
-
-        var vertices = new[] {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
-        };
-
-        vao = glGenVertexArray();
-        vbo = glGenBuffer();
-
-        glBindVertexArray(vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        fixed (float* v = &vertices[0])
-        {
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.Length, v, GL_STATIC_DRAW);
-        }
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
-        glEnableVertexAttribArray(0);
-    }
-
-    private static Random rand;
+    //private static void CheckProgramLinkStatus(uint program)
+    //{
+    //    int success;
+    //    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    //    if (success == 0)
+    //    {
+    //        byte[] infoLog = new byte[512];
+    //        glGetProgramInfoLog(program, 512, null, infoLog);
+    //        Console.WriteLine("ERROR::PROGRAM::LINKING_FAILED\n" + System.Text.Encoding.UTF8.GetString(infoLog));
+    //    }
+    //}
 }
