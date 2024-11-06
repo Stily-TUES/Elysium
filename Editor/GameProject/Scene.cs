@@ -47,6 +47,15 @@ public class Scene
 
     [DataMember]
     public ObservableCollection<GameEntity> GameEntities { get; set; }
+
+
+    public void Render()
+    {
+        foreach (var entity in GameEntities)
+        {
+            entity.Render();
+        }
+    }
     public Scene(Project project, string name)
     {
         Debug.Assert(project != null);

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using GameEngine;
+using System.Windows.Input.StylusPlugIns;
 
 namespace Editor.Components;
 
@@ -58,6 +60,13 @@ public class GameEntity : BaseViewModel
     {
         Name = newName;
         OnPropertyChanged(nameof(Name));
+    }
+    public void Render()
+    {
+        Renderer renderer = new Renderer();
+        //renderer.drawSquare((double)Transform.Position.X, (double)Transform.Position.Y, (double)0.0f, (double)1.0f);
+        renderer.drawSquare(-0.5, -0.5, 0.0, 1.0f);
+
     }
     public GameEntity(Scene parentScene)
     {

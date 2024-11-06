@@ -62,6 +62,17 @@ public class ProjectManager
         return Project.Scenes.FirstOrDefault(scene => scene.isLoaded);
     }
 
+    public void RenderProject()
+    {
+        foreach (var scene in Project.Scenes)
+        {
+            if (scene.isLoaded)
+            {
+                scene.Render();
+            }
+        }
+    }
+
     public static ProjectManager Load(string path)
     {
         var project = Project.Load(path);
