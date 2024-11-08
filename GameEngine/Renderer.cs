@@ -10,6 +10,10 @@ namespace GameEngine;
 
 public class Renderer
 {
+    public static void Main()
+    {
+
+    }
     public void drawSquare(double x1, double y1, double z1, double sidelength)
     {
         double x2 = x1 + sidelength;
