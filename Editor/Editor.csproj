@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenTK.GLControl" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GameEngine\GameEngine.csproj" />
   </ItemGroup>
 
