@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Editor.Editors;
 
@@ -26,11 +27,13 @@ public partial class ProjectEditorView : UserControl
 {
     private GLControl glControl;
     private ProjectManager projectManager;
+    private DispatcherTimer renderTimer;
 
     public ProjectEditorView()
     {
         InitializeComponent();
         Loaded += ProjectEditorView_Loaded;
+        Unloaded += ProjectEditorView_Unloaded;
     }
 
     private void ProjectEditorView_Loaded(object sender, RoutedEventArgs e)
@@ -42,8 +45,20 @@ public partial class ProjectEditorView : UserControl
 
         var window = Window.GetWindow(this);
         projectManager = (ProjectManager)window.DataContext;
+
+        renderTimer = new DispatcherTimer();
+        renderTimer.Interval = TimeSpan.FromMilliseconds(16); //60 FPS
+        renderTimer.Tick += RenderTimer_Tick;
+        renderTimer.Start();
     }
 
+    private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
+    {
+        glControl.Paint -= GlControl_Paint;
+        glControl.Resize -= GlControl_Resize;
+        renderTimer.Stop();
+        renderTimer.Tick -= RenderTimer_Tick;
+    }
 
     private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
     {
@@ -53,6 +68,11 @@ public partial class ProjectEditorView : UserControl
     private void GlControl_Resize(object sender, EventArgs e)
     {
         GL.Viewport(0, 0, glControl.Width, glControl.Height);
+    }
+
+    private void RenderTimer_Tick(object sender, EventArgs e)
+    {
+        glControl.Invalidate();
     }
 
     private void Render()
