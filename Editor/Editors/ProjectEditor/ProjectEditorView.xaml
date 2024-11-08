@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.Editors" xmlns:utils="clr-namespace:Editor.Utils"
+             xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+             
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -40,11 +42,8 @@
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" Background="#1a1f27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
         <Border Grid.Row="1" Grid.Column="2" Background="#1f2530" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">
-            <Grid>
-                <Canvas>
-  
-                </Canvas>
-            </Grid>
+            <wfi:WindowsFormsHost Name="windowsFormsHost" />
+
         </Border>
 
         <GridSplitter Grid.Row="1" Grid.Column="3" Width="5" Background="#1a1f27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
