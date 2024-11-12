@@ -28,6 +28,7 @@ public partial class ProjectLayoutView : UserControl
     public ProjectLayoutView()
     {
         InitializeComponent();
+
     }
 
     private void OnAddSceneButton_Click(object sender, RoutedEventArgs e)
@@ -112,6 +113,8 @@ public partial class ProjectLayoutView : UserControl
             var scene = textBlock.DataContext as Scene;
             if (scene != null)
             {
+                var window = Window.GetWindow(this);
+                ProjectManager = (ProjectManager)window.DataContext;
                 if (ProjectManager.GetActiveScene().isLoaded != null)
                 {
                     ProjectManager.GetActiveScene().isLoaded = false;
