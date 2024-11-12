@@ -104,4 +104,21 @@ public partial class ProjectLayoutView : UserControl
             ProjectComponentView.Instance.DataContext = null;
         }
     }
+    private void OnSceneName_Click(object sender, MouseButtonEventArgs e)
+    {
+        var textBlock = sender as TextBlock;
+        if (textBlock != null)
+        {
+            var scene = textBlock.DataContext as Scene;
+            if (scene != null)
+            {
+                if (ProjectManager.GetActiveScene().isLoaded != null)
+                {
+                    ProjectManager.GetActiveScene().isLoaded = false;
+                }
+                scene.isLoaded = !scene.isLoaded;
+            }
+        }
+    }
+
 }

@@ -13,7 +13,7 @@ using Editor.Components;
 namespace Editor.GameProject;
 
 [DataContract]
-public class Scene
+public class Scene : BaseViewModel
 {
     private string _name;
     [DataMember]
@@ -25,6 +25,7 @@ public class Scene
             if (_name != value)
             {
                 _name = value;
+                OnPropertyChanged(nameof(Name));
             }
         }
     }
@@ -41,6 +42,7 @@ public class Scene
             if (_isLoaded != value)
             {
                 _isLoaded = value;
+                OnPropertyChanged(nameof(isLoaded));
             }
         }
     }
@@ -51,6 +53,7 @@ public class Scene
 
     public void Render()
     {
+        if (GameEntities == null) return;
         foreach (var entity in GameEntities)
         {
             entity.Render();
@@ -61,6 +64,6 @@ public class Scene
         Debug.Assert(project != null);
         this.Project = project;
         this.Name = name;
-        //GameEntities = new ObservableCollection<GameEntity>();
+        GameEntities = new ObservableCollection<GameEntity>();
     }
 }
