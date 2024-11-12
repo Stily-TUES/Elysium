@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 using System.Threading.Tasks;
@@ -10,9 +11,43 @@ namespace GameEngine;
 
 public class Renderer
 {
+    private int shaderProgram;
     public static void Main()
     {
 
+    }
+    public Renderer()
+    {
+        string vertexShaderSource = File.ReadAllText("../../../../GameEngine/Shaders/shader.vert");
+        string fragmentShaderSource = File.ReadAllText("../../../../GameEngine/Shaders/shader.frag");
+
+        int vertexShader = CompileShader(ShaderType.VertexShader, vertexShaderSource);
+        int fragmentShader = CompileShader(ShaderType.FragmentShader, fragmentShaderSource);
+
+        shaderProgram = GL.CreateProgram();
+        GL.AttachShader(shaderProgram, vertexShader);
+        GL.AttachShader(shaderProgram, fragmentShader);
+        GL.LinkProgram(shaderProgram);
+
+        GL.DeleteShader(vertexShader);
+        GL.DeleteShader(fragmentShader);
+    }
+
+    private int CompileShader(ShaderType type, string source)
+    {
+        int shader = GL.CreateShader(type);
+        GL.ShaderSource(shader, source);
+        GL.CompileShader(shader);
+
+
+        GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
+        if (success == 0)
+        {
+            string infoLog = GL.GetShaderInfoLog(shader);
+            throw new Exception($"Error compiling {type}: {infoLog}");
+        }
+
+        return shader;
     }
     public void drawSquare(double x1, double y1, double z1, double sidelength)
     {
@@ -47,6 +82,7 @@ public class Renderer
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
+        GL.UseProgram(shaderProgram);
 
         GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 

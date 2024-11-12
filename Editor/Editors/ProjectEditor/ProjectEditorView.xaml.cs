@@ -4,6 +4,7 @@ using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Path = System.IO.Path;
 
 namespace Editor.Editors;
 
@@ -34,6 +36,7 @@ public partial class ProjectEditorView : UserControl
         InitializeComponent();
         Loaded += ProjectEditorView_Loaded;
         Unloaded += ProjectEditorView_Unloaded;
+        LoadTextures();
     }
 
     private void ProjectEditorView_Loaded(object sender, RoutedEventArgs e)
@@ -68,6 +71,7 @@ public partial class ProjectEditorView : UserControl
     private void GlControl_Resize(object sender, EventArgs e)
     {
         GL.Viewport(0, 0, glControl.Width, glControl.Height);
+
     }
 
     private void RenderTimer_Tick(object sender, EventArgs e)
@@ -82,6 +86,25 @@ public partial class ProjectEditorView : UserControl
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             projectManager.RenderProject();
             glControl.SwapBuffers();
+        }
+    }
+
+    private void LoadTextures()
+    {
+        string texturesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../GameEngine", "Textures");
+        if (Directory.Exists(texturesFolderPath))
+        {
+            var textureFiles = Directory.GetFiles(texturesFolderPath)
+            .Select(filePath => new TextureFile
+            {
+                FileName = Path.GetFileName(filePath),
+                ImagePath = File.ReadAllBytes(filePath)
+            }).ToList();
+            TexturesListBox.ItemsSource = textureFiles;
+        }
+        else
+        {
+            MessageBox.Show("Textures folder not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

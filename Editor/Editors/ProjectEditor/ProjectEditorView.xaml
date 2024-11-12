@@ -77,7 +77,21 @@
           
                 </TabItem>
                 <TabItem Header="Textures">
-                 
+                    <ListBox Background="#2a2f38" Foreground="White" x:Name="TexturesListBox">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5">
+                                    <Image Source="{Binding ImagePath}" Width="50" Height="50" Margin="5"/>
+                                    <TextBlock Text="{Binding FileName}" Foreground="White" TextAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </TabItem>
                 <TabItem Header="Models">
                   
