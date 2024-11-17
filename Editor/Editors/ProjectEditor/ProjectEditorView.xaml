@@ -85,7 +85,7 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5" MouseLeftButtonDown="onTextureDrag_MouseLeftButtonDown">
                                     <Image Source="{Binding ImagePath}" Width="50" Height="50" Margin="5"/>
                                     <TextBlock Text="{Binding FileName}" Foreground="White" TextAlignment="Center"/>
                                 </StackPanel>

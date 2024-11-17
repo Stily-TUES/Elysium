@@ -47,4 +47,18 @@ public partial class ProjectComponentView : UserControl
             }
         }
     }
+    private void OnTextureDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(TextureFile)))
+        {
+            var window = Window.GetWindow(this);
+            var textureFile = (TextureFile)e.Data.GetData(typeof(TextureFile));
+
+            var gameEntity = (GameEntity)this.DataContext;
+            if (gameEntity != null)
+            {
+                gameEntity.Texture = textureFile;
+            }
+        }
+    }
 }

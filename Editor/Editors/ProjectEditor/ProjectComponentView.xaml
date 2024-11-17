@@ -9,11 +9,15 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Border Background="#2a2f38" Padding="10">
         <StackPanel>
+            <Border BorderBrush="White" BorderThickness="1" AllowDrop="True" Drop="OnTextureDrop">
+                <TextBlock Text="Drag and drop texture file here" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+            </Border>
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="Auto"/>
+                    
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Name:" Foreground="White" Margin="0,0,5,0"/>
                 <TextBox Grid.Column="1" x:Name="RenameTextBox" KeyDown="RenameTextBox_KeyDown" Text="{Binding Name}" Background="#2a2f38" Foreground="White" Width="100"/>

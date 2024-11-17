@@ -91,16 +91,9 @@ public partial class ProjectEditorView : UserControl
 
     private void LoadTextures()
     {
-        string texturesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../GameEngine", "Textures");
-        if (Directory.Exists(texturesFolderPath))
+        if (TextureFile.TextureFiles.Any())
         {
-            var textureFiles = Directory.GetFiles(texturesFolderPath)
-            .Select(filePath => new TextureFile
-            {
-                FileName = Path.GetFileName(filePath),
-                ImagePath = File.ReadAllBytes(filePath)
-            }).ToList();
-            TexturesListBox.ItemsSource = textureFiles;
+            TexturesListBox.ItemsSource = TextureFile.TextureFiles;
         }
         else
         {
@@ -121,5 +114,15 @@ public partial class ProjectEditorView : UserControl
     private void onSaveButton_Click(object sender, RoutedEventArgs e)
     {
         projectManager?.Save();
+    }
+    private void onTextureDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var stackPanel = sender as StackPanel;
+        var textureFile = stackPanel.DataContext as TextureFile;
+
+        if (textureFile != null)
+        {
+            DragDrop.DoDragDrop(stackPanel, textureFile, DragDropEffects.Copy);
+        }
     }
 }

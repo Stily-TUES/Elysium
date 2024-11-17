@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GameEngine;
 using System.Windows.Input.StylusPlugIns;
+using Editor.Utils;
 
 namespace Editor.Components;
 
@@ -54,6 +55,8 @@ public class GameEntity : BaseViewModel
     //public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
     [DataMember]
     public Transform Transform { get; set; }
+    [DataMember]
+    public TextureFile Texture { get; set; }
     [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
     public void Rename(string newName)
