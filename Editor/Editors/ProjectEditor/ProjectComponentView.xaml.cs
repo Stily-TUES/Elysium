@@ -51,7 +51,6 @@ public partial class ProjectComponentView : UserControl
     {
         if (e.Data.GetDataPresent(typeof(TextureFile)))
         {
-            var window = Window.GetWindow(this);
             var textureFile = (TextureFile)e.Data.GetData(typeof(TextureFile));
 
             var gameEntity = (GameEntity)this.DataContext;

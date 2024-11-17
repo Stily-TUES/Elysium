@@ -68,7 +68,11 @@ public class GameEntity : BaseViewModel
     {
         Renderer renderer = new Renderer();
         //renderer.drawSquare((double)Transform.Position.X, (double)Transform.Position.Y, (double)0.0f, (double)1.0f);
-        renderer.drawSquare(-0.5, -0.5, 0.0, 1.0f);
+        if (Texture == null)
+        {
+            Texture = new TextureFile();
+        }
+        renderer.DrawSquare(-0.5, -0.5, 0.0, 1.0f, Texture.ImagePath);
 
     }
     public GameEntity(Scene parentScene)
