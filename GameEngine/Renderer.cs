@@ -111,8 +111,68 @@ public class Renderer
         GL.DeleteBuffer(EBO);
         GL.DeleteVertexArray(VAO);
     }
+    public void RenderBackground(string texturePath)
+    {
 
-    private int LoadTexture(string path)
+        float[] vertices = {
+            -1.0f, -1.0f, 0.0f,  0.0f, 1.0f,
+             1.0f, -1.0f, 0.0f,  1.0f, 1.0f,
+             1.0f,  1.0f, 0.0f,  1.0f, 0.0f,
+            -1.0f,  1.0f, 0.0f,  0.0f, 0.0f
+        };
+
+        uint[] indices = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        int VBO = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+
+        int EBO = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+        int VAO = GL.GenVertexArray();
+        GL.BindVertexArray(VAO);
+
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+        GL.EnableVertexAttribArray(0);
+
+        GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+        GL.EnableVertexAttribArray(1);
+        GL.UseProgram(shaderProgram);
+
+        if (!string.IsNullOrEmpty(texturePath))
+        {
+            int textureId = LoadTexture(texturePath);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, textureId);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "texture1"), 0);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 1);
+        }
+        else
+        {
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 0);
+        }
+
+        GL.BindVertexArray(VAO);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
+        GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
+        GL.DisableVertexAttribArray(0);
+        GL.DisableVertexAttribArray(1);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        GL.BindVertexArray(0);
+
+        GL.DeleteBuffer(VBO);
+        GL.DeleteBuffer(EBO);
+        GL.DeleteVertexArray(VAO);
+    }
+
+    public int LoadTexture(string path)
     {
         int textureId = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, textureId);

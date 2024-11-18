@@ -1,5 +1,6 @@
 ﻿using Editor.GameProject;
 using Editor.Utils;
+using GameEngine;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL4;
 using System;
@@ -30,6 +31,9 @@ public partial class ProjectEditorView : UserControl
     private GLControl glControl;
     private ProjectManager projectManager;
     private DispatcherTimer renderTimer;
+    private int backgroundTextureId;
+    private Renderer renderer;
+
 
     public ProjectEditorView()
     {
@@ -53,6 +57,8 @@ public partial class ProjectEditorView : UserControl
         renderTimer.Interval = TimeSpan.FromMilliseconds(16); //60 FPS
         renderTimer.Tick += RenderTimer_Tick;
         renderTimer.Start();
+
+        renderer = new Renderer();
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -84,6 +90,7 @@ public partial class ProjectEditorView : UserControl
         if (projectManager != null)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            renderer.RenderBackground("C:/Users/User/source/repos/Elysium/GameEngine/Textures/skybox.jfif");
             projectManager.RenderProject();
             glControl.SwapBuffers();
         }
