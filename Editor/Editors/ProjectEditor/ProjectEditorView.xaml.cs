@@ -90,7 +90,11 @@ public partial class ProjectEditorView : UserControl
         if (projectManager != null)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            renderer.RenderBackground("C:/Users/User/source/repos/Elysium/GameEngine/Textures/skybox.jfif");
+            if(projectManager.GetActiveScene().Background == null)
+            {
+                projectManager.GetActiveScene().Background = new TextureFile();
+            }
+                renderer.RenderBackground(projectManager.GetActiveScene().Background.ImagePath);
             projectManager.RenderProject();
             glControl.SwapBuffers();
         }

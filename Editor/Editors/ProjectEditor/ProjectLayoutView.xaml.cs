@@ -1,4 +1,5 @@
 ﻿using Editor.Commands;
+using Editor.Components;
 using Editor.GameProject;
 using Editor.Utils;
 using System;
@@ -120,6 +121,19 @@ public partial class ProjectLayoutView : UserControl
                     ProjectManager.GetActiveScene().isLoaded = false;
                 }
                 scene.isLoaded = !scene.isLoaded;
+            }
+        }
+    }
+    private void OnTextureDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(TextureFile)))
+        {
+            var textureFile = (TextureFile)e.Data.GetData(typeof(TextureFile));
+
+            var projectManager = (ProjectManager)this.DataContext;
+            if (projectManager.GetActiveScene() != null)
+            {
+                projectManager.GetActiveScene().Background = textureFile;
             }
         }
     }

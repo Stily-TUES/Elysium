@@ -10,7 +10,7 @@
     <Border Background="#2a2f38" Padding="10">
         <StackPanel>
             <Border BorderBrush="White" BorderThickness="1" AllowDrop="True" Drop="OnTextureDrop">
-                <TextBlock Text="Drag and drop texture file here" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                <TextBlock Text="Drag and drop texture file here" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" IsEnabled="{Binding IsActive}"/>
             </Border>
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>

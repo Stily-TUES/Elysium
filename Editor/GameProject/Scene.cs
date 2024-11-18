@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Editor.Common;
 using Editor.Components;
+using Editor.Utils;
 
 namespace Editor.GameProject;
 
@@ -49,7 +50,8 @@ public class Scene : BaseViewModel
 
     [DataMember]
     public ObservableCollection<GameEntity> GameEntities { get; set; }
-
+    [DataMember]
+    public TextureFile Background { get; set; }
 
     public void Render()
     {
