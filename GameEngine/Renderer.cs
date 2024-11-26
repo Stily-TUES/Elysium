@@ -7,6 +7,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
+using Vector3 = OpenTK.Mathematics.Vector3;
 
 namespace GameEngine;
 
@@ -47,23 +49,26 @@ public class Renderer
         return shader;
     }
 
-    public void DrawSquare(double x1, double y1, double z1, double sideLength, string texturePath)
+    public void DrawSquare(Vector3 position, double sideLength, string texturePath, Vector3 rotation, Vector3 scale)
     {
+        double x1 = position.X;
+        double y1 = position.Y;
+        double z1 = position.Z;
         double x2 = x1 + sideLength;
         double y2 = y1 + sideLength;
 
         float[] vertices = {
-        // positions          // texture coords
-        (float)x1, (float)y1, (float)z1,  0.0f, 0.0f,
-        (float)x2, (float)y1, (float)z1,  1.0f, 0.0f,
-        (float)x2, (float)y2, (float)z1,  1.0f, 1.0f,
-        (float)x1, (float)y2, (float)z1,  0.0f, 1.0f
-    };
+            // positions          // texture coords
+            (float)x1, (float)y1, (float)z1,  0.0f, 0.0f,
+            (float)x2, (float)y1, (float)z1,  1.0f, 0.0f,
+            (float)x2, (float)y2, (float)z1,  1.0f, 1.0f,
+            (float)x1, (float)y2, (float)z1,  0.0f, 1.0f
+        };
 
         uint[] indices = {
-        0, 1, 2,
-        2, 3, 0
-    };
+            0, 1, 2,
+            2, 3, 0
+        };
 
         int VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
@@ -84,6 +89,23 @@ public class Renderer
 
         GL.UseProgram(shaderProgram);
 
+        GL.Uniform1(GL.GetUniformLocation(shaderProgram, "isBackground"), 0);
+
+
+        Matrix4 scaleMatrix = Matrix4.CreateScale(scale);
+        Matrix4 rotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotation.X)) *
+                                 Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rotation.Y)) *
+                                 Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rotation.Z));
+        Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
+
+        Matrix4 transformationMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+
+
+        int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
+        GL.UniformMatrix4(transformLoc, false, ref transformationMatrix);
+        
+
+
         if (!string.IsNullOrEmpty(texturePath))
         {
             int textureId = LoadTexture(texturePath);
@@ -98,7 +120,7 @@ public class Renderer
         }
 
         GL.BindVertexArray(VAO);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO); 
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
         GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
         GL.DisableVertexAttribArray(0);
@@ -144,6 +166,7 @@ public class Renderer
         GL.EnableVertexAttribArray(1);
         GL.UseProgram(shaderProgram);
 
+        GL.Uniform1(GL.GetUniformLocation(shaderProgram, "isBackground"), 1);
         if (!string.IsNullOrEmpty(texturePath))
         {
             int textureId = LoadTexture(texturePath);

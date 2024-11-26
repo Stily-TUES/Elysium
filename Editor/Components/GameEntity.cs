@@ -72,7 +72,7 @@ public class GameEntity : BaseViewModel
         {
             Texture = new TextureFile();
         }
-        renderer.DrawSquare(Transform.PositionX, Transform.PositionY, Transform.PositionZ, 1.0f, Texture.ImagePath);
+        renderer.DrawSquare(Transform.Position, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale);
 
     }
     public GameEntity(Scene parentScene)

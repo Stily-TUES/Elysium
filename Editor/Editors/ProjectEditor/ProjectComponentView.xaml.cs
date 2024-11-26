@@ -1,8 +1,10 @@
 ﻿using Editor.Commands;
 using Editor.Components;
+using Editor.GameProject;
 using Editor.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +46,33 @@ public partial class ProjectComponentView : UserControl
                 var renameCommand = new RenameCommand(ProjectManager.Project, gameEntity, gameEntity.Name, newName);
                 ProjectManager.Add(renameCommand);
                 gameEntity.Rename(newName);
+            }
+        }
+    }
+    private void TransformTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+
+            var textBox = sender as TextBox;
+            if (textBox != null)
+            {
+                var viewModel = DataContext as GameEntity;
+                if (viewModel != null)
+                {
+                    var propertyName = textBox.GetBindingExpression(TextBox.TextProperty).ResolvedSourcePropertyName;
+                    var oldValue = (float)viewModel.Transform.GetType().GetProperty(propertyName).GetValue(viewModel.Transform);
+                    //because float.Parse uses , as decimal separator not . we need to use InvariantCulture
+                    var newValue = float.Parse(textBox.Text, CultureInfo.InvariantCulture.NumberFormat);
+                    if (oldValue != newValue)
+                    {
+                        var window = Window.GetWindow(this);
+                        ProjectManager = (ProjectManager)window.DataContext;
+                        var updateCommand = new UpdateTransformCommand(Project.CurrentLoadedProject, viewModel.Transform, propertyName, oldValue, newValue);
+                        updateCommand.Apply();
+                        ProjectManager.Add(updateCommand);
+                    }
+                }
             }
         }
     }

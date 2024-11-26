@@ -72,6 +72,7 @@ public class Transform : Component
             }
         }
     }
+
     private Vector3 _rotation;
     [DataMember]
     public Vector3 Rotation
@@ -129,7 +130,7 @@ public class Transform : Component
         }
     }
 
-    private Vector3 _scale;
+    private Vector3 _scale = Vector3.One;
     [DataMember]
     public Vector3 Scale
     {
