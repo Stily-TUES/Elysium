@@ -91,6 +91,7 @@ public class Renderer
 
         GL.Uniform1(GL.GetUniformLocation(shaderProgram, "isBackground"), 0);
 
+        Vector3 center = new Vector3((float)(x1 + x2) / 2, (float)(y1 + y2) / 2, (float)z1);
 
         Matrix4 scaleMatrix = Matrix4.CreateScale(scale);
         Matrix4 rotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotation.X)) *
@@ -98,13 +99,10 @@ public class Renderer
                                  Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rotation.Z));
         Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
 
-        Matrix4 transformationMatrix = scaleMatrix * rotationMatrix * translationMatrix;
-
+        Matrix4 transformationMatrix = Matrix4.CreateTranslation(-center) * rotationMatrix * Matrix4.CreateTranslation(center) * scaleMatrix * translationMatrix;
 
         int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
         GL.UniformMatrix4(transformLoc, false, ref transformationMatrix);
-        
-
 
         if (!string.IsNullOrEmpty(texturePath))
         {
