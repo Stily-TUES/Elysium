@@ -15,6 +15,7 @@ using System.Windows.Media.Media3D;
 using OpenTK.Mathematics;
 using Camera = GameEngine.Camera;
 using Vector3 = OpenTK.Mathematics.Vector3;
+using System.Windows.Media.Imaging;
 
 namespace Editor.Components;
 
@@ -75,9 +76,9 @@ public class GameEntity : BaseViewModel
         {
             Texture = new TextureFile();
         }
-        //Vector3 adjustedPosition = Transform.Position - new Vector3(camera.Position.X, camera.Position.Y, 0);
-        //                  Transform.Postition
-        renderer.DrawSquare(Transform.Position, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
+        Mesh squareMesh = Mesh.CreateSquare(1.0f);
+        Matrix4 modelMatrix = renderer.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero);
+        renderer.RenderMesh(squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
 
     }
     public GameEntity(Scene parentScene)
