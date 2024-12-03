@@ -68,16 +68,16 @@ public class GameEntity : BaseViewModel
         Name = newName;
         OnPropertyChanged(nameof(Name));
     }
-    public void Render(Camera camera)
+    public void Render(Camera camera, float aspectRatio)
     {
         Renderer renderer = new Renderer();
         if (Texture == null)
         {
             Texture = new TextureFile();
         }
-        Vector3 adjustedPosition = Transform.Position - new Vector3(camera.Position.X, camera.Position.Y, 0);
+        //Vector3 adjustedPosition = Transform.Position - new Vector3(camera.Position.X, camera.Position.Y, 0);
         //                  Transform.Postition
-        renderer.DrawSquare(adjustedPosition, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale);//, camera.GetViewMatrix(), camera.GetProjectionMatrix(1.0f));
+        renderer.DrawSquare(Transform.Position, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
 
     }
     public GameEntity(Scene parentScene)

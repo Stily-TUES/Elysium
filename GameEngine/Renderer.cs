@@ -67,7 +67,7 @@ public class Renderer
         return Matrix4.CreateTranslation(-center) * rotationMatrix * Matrix4.CreateTranslation(center) * scaleMatrix  * translationMatrix;
     }
 
-    public void DrawSquare(Vector3 position, double sideLength, string texturePath, Vector3 rotation, Vector3 scale)//, Matrix4 viewMatrix, Matrix4 projectionMatrix)
+    public void DrawSquare(Vector3 position, double sideLength, string texturePath, Vector3 rotation, Vector3 scale, Matrix4 viewMatrix, Matrix4 projectionMatrix)
     {
         double x1 = position.X;
         double y1 = position.Y;
@@ -110,8 +110,8 @@ public class Renderer
 
         Matrix4 modelMatrix = CreateModelMatrix(position, rotation, scale, center);
 
-        Matrix4 transformMatrix = modelMatrix;
-        //Matrix4 transformMatrix = projectionMatrix * viewMatrix * modelMatrix;
+        //Matrix4 transformMatrix = modelMatrix;
+        Matrix4 transformMatrix = modelMatrix * viewMatrix * projectionMatrix;
 
         int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
         GL.UniformMatrix4(transformLoc, false, ref transformMatrix);
@@ -207,7 +207,6 @@ public class Renderer
         GL.DeleteBuffer(EBO);
         GL.DeleteVertexArray(VAO);
     }
-
 
     public int LoadTexture(string path)
     {

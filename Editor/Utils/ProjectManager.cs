@@ -63,13 +63,13 @@ public class ProjectManager
         return Project.Scenes.FirstOrDefault(scene => scene.isLoaded);
     }
 
-    public void RenderProject(Camera camera)
+    public void RenderProject(Camera camera, float aspectRatio)
     {
         foreach (var scene in Project.Scenes)
         {
             if (scene.isLoaded)
             {
-                scene.Render(camera);
+                scene.Render(camera, aspectRatio);
             }
         }
     }

@@ -33,6 +33,7 @@ public partial class ProjectEditorView : UserControl
     private Camera camera;
     private Point lastMousePosition;
     private float cameraSensitivity = 0.01f;
+    private float aspectRatio;
 
     public ProjectEditorView()
     {
@@ -85,6 +86,7 @@ public partial class ProjectEditorView : UserControl
     private void GlControl_Resize(object sender, EventArgs e)
     {
         GL.Viewport(0, 0, glControl.Width, glControl.Height);
+        aspectRatio = (float)glControl.Width / glControl.Height;
     }
 
     private void RenderTimer_Tick(object sender, EventArgs e)
@@ -142,7 +144,7 @@ public partial class ProjectEditorView : UserControl
                 projectManager.GetActiveScene().Background = new TextureFile();
             }
             renderer.RenderBackground(projectManager.GetActiveScene().Background.ImagePath);
-            projectManager.RenderProject(camera);
+            projectManager.RenderProject(camera, aspectRatio);
             glControl.SwapBuffers();
         }
     }

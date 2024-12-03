@@ -54,12 +54,12 @@ public class Scene : BaseViewModel
     [DataMember]
     public TextureFile Background { get; set; }
 
-    public void Render(Camera camera)
+    public void Render(Camera camera, float aspectRatio)
     {
         if (GameEntities == null) return;
         foreach (var entity in GameEntities)
         {
-            entity.Render(camera);
+            entity.Render(camera, aspectRatio);
         }
     }
     public Scene(Project project, string name)
