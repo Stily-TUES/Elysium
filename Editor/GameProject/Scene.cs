@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using Editor.Common;
 using Editor.Components;
 using Editor.Utils;
+using GameEngine;
 
 namespace Editor.GameProject;
 
@@ -53,12 +54,12 @@ public class Scene : BaseViewModel
     [DataMember]
     public TextureFile Background { get; set; }
 
-    public void Render()
+    public void Render(Camera camera)
     {
         if (GameEntities == null) return;
         foreach (var entity in GameEntities)
         {
-            entity.Render();
+            entity.Render(camera);
         }
     }
     public Scene(Project project, string name)

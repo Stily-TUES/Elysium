@@ -1,4 +1,5 @@
 ﻿using Editor.GameProject;
+using GameEngine;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -62,13 +63,13 @@ public class ProjectManager
         return Project.Scenes.FirstOrDefault(scene => scene.isLoaded);
     }
 
-    public void RenderProject()
+    public void RenderProject(Camera camera)
     {
         foreach (var scene in Project.Scenes)
         {
             if (scene.isLoaded)
             {
-                scene.Render();
+                scene.Render(camera);
             }
         }
     }

@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using GameEngine;
 using System.Windows.Input.StylusPlugIns;
 using Editor.Utils;
+using System.Windows.Media.Media3D;
+using OpenTK.Mathematics;
+using Camera = GameEngine.Camera;
+using Vector3 = OpenTK.Mathematics.Vector3;
 
 namespace Editor.Components;
 
@@ -64,15 +68,16 @@ public class GameEntity : BaseViewModel
         Name = newName;
         OnPropertyChanged(nameof(Name));
     }
-    public void Render()
+    public void Render(Camera camera)
     {
         Renderer renderer = new Renderer();
-        //renderer.drawSquare((double)Transform.Position.X, (double)Transform.Position.Y, (double)0.0f, (double)1.0f);
         if (Texture == null)
         {
             Texture = new TextureFile();
         }
-        renderer.DrawSquare(Transform.Position, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale);
+        Vector3 adjustedPosition = Transform.Position - new Vector3(camera.Position.X, camera.Position.Y, 0);
+        //                  Transform.Postition
+        renderer.DrawSquare(adjustedPosition, 1.0f, Texture.ImagePath, Transform.Rotation, Transform.Scale);//, camera.GetViewMatrix(), camera.GetProjectionMatrix(1.0f));
 
     }
     public GameEntity(Scene parentScene)

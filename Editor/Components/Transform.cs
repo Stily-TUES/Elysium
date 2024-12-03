@@ -84,38 +84,11 @@ public class Transform : Component
             {
                 _rotation = value;
                 OnPropertyChanged(nameof(Rotation));
-                OnPropertyChanged(nameof(RotationX));
-                OnPropertyChanged(nameof(RotationY));
                 OnPropertyChanged(nameof(RotationZ));
             }
         }
     }
-    public float RotationX
-    {
-        get => Rotation.X;
-        set
-        {
-            if (_rotation.X != value)
-            {
-                _rotation.X = value;
-                OnPropertyChanged(nameof(Rotation));
-                OnPropertyChanged(nameof(RotationX));
-            }
-        }
-    }
-    public float RotationY
-    {
-        get => Rotation.Y;
-        set
-        {
-            if (_rotation.Y != value)
-            {
-                _rotation.Y = value;
-                OnPropertyChanged(nameof(Rotation));
-                OnPropertyChanged(nameof(RotationY));
-            }
-        }
-    }
+    
     public float RotationZ
     {
         get => Rotation.Z;

@@ -3,6 +3,7 @@ using Editor.Utils;
 using GameEngine;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL4;
+using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,12 +15,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using Path = System.IO.Path;
+using OpenTK.Mathematics;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Editor.Editors;
 
@@ -31,9 +29,10 @@ public partial class ProjectEditorView : UserControl
     private GLControl glControl;
     private ProjectManager projectManager;
     private DispatcherTimer renderTimer;
-    private int backgroundTextureId;
     private Renderer renderer;
-
+    private Camera camera;
+    private Point lastMousePosition;
+    private float cameraSensitivity = 0.01f;
 
     public ProjectEditorView()
     {
@@ -48,6 +47,10 @@ public partial class ProjectEditorView : UserControl
         glControl = new GLControl();
         glControl.Paint += GlControl_Paint;
         glControl.Resize += GlControl_Resize;
+        glControl.MouseMove += GlControl_MouseMove;
+        glControl.MouseDown += GlControl_MouseDown;
+        glControl.MouseUp += GlControl_MouseUp;
+        glControl.MouseWheel += GlControl_MouseWheel;
         windowsFormsHost.Child = glControl;
 
         var window = Window.GetWindow(this);
@@ -58,6 +61,7 @@ public partial class ProjectEditorView : UserControl
         renderTimer.Tick += RenderTimer_Tick;
         renderTimer.Start();
 
+        camera = new Camera();
         renderer = new Renderer();
     }
 
@@ -65,6 +69,10 @@ public partial class ProjectEditorView : UserControl
     {
         glControl.Paint -= GlControl_Paint;
         glControl.Resize -= GlControl_Resize;
+        glControl.MouseMove -= GlControl_MouseMove;
+        glControl.MouseDown -= GlControl_MouseDown;
+        glControl.MouseUp -= GlControl_MouseUp;
+        glControl.MouseWheel -= GlControl_MouseWheel;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
     }
@@ -77,12 +85,51 @@ public partial class ProjectEditorView : UserControl
     private void GlControl_Resize(object sender, EventArgs e)
     {
         GL.Viewport(0, 0, glControl.Width, glControl.Height);
-
     }
 
     private void RenderTimer_Tick(object sender, EventArgs e)
     {
+        camera.Update(0.016f);
         glControl.Invalidate();
+    }
+
+    private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+        if (e.Button == System.Windows.Forms.MouseButtons.Right)
+        {
+            var deltaX = (float)(e.X - lastMousePosition.X) * cameraSensitivity;
+            var deltaY = (float)(e.Y - lastMousePosition.Y) * cameraSensitivity;
+            camera.Move(new Vector2(deltaX, -deltaY));
+            lastMousePosition = new Point(e.X, e.Y);
+        }
+    }
+
+    private void GlControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+        if (e.Button == System.Windows.Forms.MouseButtons.Right)
+        {
+            lastMousePosition = new Point(e.X, e.Y);
+        }
+    }
+
+    private void GlControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+        if (e.Delta > 0)
+        {
+            camera.ZoomIn(0.1f);
+        }
+        else
+        {
+            camera.ZoomOut(0.1f);
+        }
+    }
+
+    private void GlControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+        if (e.Button == System.Windows.Forms.MouseButtons.Right)
+        {
+            lastMousePosition = new Point(0, 0);
+        }
     }
 
     private void Render()
@@ -90,12 +137,12 @@ public partial class ProjectEditorView : UserControl
         if (projectManager != null)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            if(projectManager.GetActiveScene().Background == null)
+            if (projectManager.GetActiveScene().Background == null)
             {
                 projectManager.GetActiveScene().Background = new TextureFile();
             }
-                renderer.RenderBackground(projectManager.GetActiveScene().Background.ImagePath);
-            projectManager.RenderProject();
+            renderer.RenderBackground(projectManager.GetActiveScene().Background.ImagePath);
+            projectManager.RenderProject(camera);
             glControl.SwapBuffers();
         }
     }
@@ -126,6 +173,7 @@ public partial class ProjectEditorView : UserControl
     {
         projectManager?.Save();
     }
+
     private void onTextureDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         var stackPanel = sender as StackPanel;

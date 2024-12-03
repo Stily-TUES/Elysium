@@ -15,22 +15,28 @@ namespace GameEngine;
 public class Renderer
 {
     private int shaderProgram;
-    public static void Main() {}
+    public static void Main() { }
     public Renderer()
     {
-        string vertexShaderSource = File.ReadAllText("../../../../GameEngine/Shaders/shader.vert");
-        string fragmentShaderSource = File.ReadAllText("../../../../GameEngine/Shaders/shader.frag");
+        shaderProgram = CreateShaderProgram("../../../../GameEngine/Shaders/shader.vert", "../../../../GameEngine/Shaders/shader.frag");
+    }
+    private int CreateShaderProgram(string vertexPath, string fragmentPath)
+    {
+        string vertexShaderSource = File.ReadAllText(vertexPath);
+        string fragmentShaderSource = File.ReadAllText(fragmentPath);
 
         int vertexShader = CompileShader(ShaderType.VertexShader, vertexShaderSource);
         int fragmentShader = CompileShader(ShaderType.FragmentShader, fragmentShaderSource);
 
-        shaderProgram = GL.CreateProgram();
-        GL.AttachShader(shaderProgram, vertexShader);
-        GL.AttachShader(shaderProgram, fragmentShader);
-        GL.LinkProgram(shaderProgram);
+        int program = GL.CreateProgram();
+        GL.AttachShader(program, vertexShader);
+        GL.AttachShader(program, fragmentShader);
+        GL.LinkProgram(program);
 
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
+
+        return program;
     }
 
     private int CompileShader(ShaderType type, string source)
@@ -49,7 +55,19 @@ public class Renderer
         return shader;
     }
 
-    public void DrawSquare(Vector3 position, double sideLength, string texturePath, Vector3 rotation, Vector3 scale)
+    private Matrix4 CreateModelMatrix(Vector3 position, Vector3 rotation, Vector3 scale, Vector3 center)
+    {
+        Matrix4 scaleMatrix = Matrix4.CreateScale(scale);
+        Matrix4 rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotation.X));
+        Matrix4 rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rotation.Y));
+        Matrix4 rotationZ = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rotation.Z));
+        Matrix4 rotationMatrix = rotationX * rotationY * rotationZ;
+        Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
+
+        return Matrix4.CreateTranslation(-center) * rotationMatrix * Matrix4.CreateTranslation(center) * scaleMatrix  * translationMatrix;
+    }
+
+    public void DrawSquare(Vector3 position, double sideLength, string texturePath, Vector3 rotation, Vector3 scale)//, Matrix4 viewMatrix, Matrix4 projectionMatrix)
     {
         double x1 = position.X;
         double y1 = position.Y;
@@ -69,7 +87,6 @@ public class Renderer
             0, 1, 2,
             2, 3, 0
         };
-
         int VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
@@ -88,21 +105,16 @@ public class Renderer
         GL.EnableVertexAttribArray(1);
 
         GL.UseProgram(shaderProgram);
-
-        GL.Uniform1(GL.GetUniformLocation(shaderProgram, "isBackground"), 0);
 
         Vector3 center = new Vector3((float)(x1 + x2) / 2, (float)(y1 + y2) / 2, (float)z1);
 
-        Matrix4 scaleMatrix = Matrix4.CreateScale(scale);
-        Matrix4 rotationMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotation.X)) *
-                                 Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rotation.Y)) *
-                                 Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rotation.Z));
-        Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
+        Matrix4 modelMatrix = CreateModelMatrix(position, rotation, scale, center);
 
-        Matrix4 transformationMatrix = Matrix4.CreateTranslation(-center) * rotationMatrix * Matrix4.CreateTranslation(center) * scaleMatrix * translationMatrix;
+        Matrix4 transformMatrix = modelMatrix;
+        //Matrix4 transformMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
         int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
-        GL.UniformMatrix4(transformLoc, false, ref transformationMatrix);
+        GL.UniformMatrix4(transformLoc, false, ref transformMatrix);
 
         if (!string.IsNullOrEmpty(texturePath))
         {
@@ -131,20 +143,20 @@ public class Renderer
         GL.DeleteBuffer(EBO);
         GL.DeleteVertexArray(VAO);
     }
+
     public void RenderBackground(string texturePath)
     {
-
         float[] vertices = {
-            -1.0f, -1.0f, 0.0f,  0.0f, 1.0f,
-             1.0f, -1.0f, 0.0f,  1.0f, 1.0f,
-             1.0f,  1.0f, 0.0f,  1.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f,  0.0f, 0.0f
-        };
+        -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 
+         1.0f, -1.0f, 0.0f,  1.0f, 1.0f, 
+         1.0f,  1.0f, 0.0f,  1.0f, 0.0f, 
+        -1.0f,  1.0f, 0.0f,  0.0f, 0.0f  
+    };
 
         uint[] indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        0, 1, 2,
+        2, 3, 0
+    };
 
         int VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
@@ -162,9 +174,12 @@ public class Renderer
 
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
         GL.EnableVertexAttribArray(1);
+
         GL.UseProgram(shaderProgram);
 
-        GL.Uniform1(GL.GetUniformLocation(shaderProgram, "isBackground"), 1);
+        int isBackgroundLoc = GL.GetUniformLocation(shaderProgram, "isBackground");
+        GL.Uniform1(isBackgroundLoc, 1);
+
         if (!string.IsNullOrEmpty(texturePath))
         {
             int textureId = LoadTexture(texturePath);
@@ -192,6 +207,7 @@ public class Renderer
         GL.DeleteBuffer(EBO);
         GL.DeleteVertexArray(VAO);
     }
+
 
     public int LoadTexture(string path)
     {
