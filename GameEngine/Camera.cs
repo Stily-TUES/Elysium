@@ -20,7 +20,7 @@ public class Camera
     public Vector2 Position { get; set; }
     public float Zoom { get; set; } = 0.5f;
     private float maxZoom = 50.0f;
-    private float minZoom = 0.2f;
+    private float minZoom = 0.28f;
     private Vector2 targetPosition;
     private float moveSpeed = 5.0f;
     private float zoomSpeed = 0.1f;
