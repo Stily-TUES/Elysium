@@ -20,7 +20,7 @@ public class Camera
     public Vector2 Position { get; set; }
     public float Zoom { get; set; } = 0.5f;
     private float maxZoom = 50.0f;
-    private float minZoom = 0.01f;
+    private float minZoom = 0.2f;
     private Vector2 targetPosition;
     private float moveSpeed = 5.0f;
     private float zoomSpeed = 0.1f;
@@ -39,12 +39,12 @@ public class Camera
 
     public void ZoomIn(float amount)
     {
-        Zoom += amount;
+        Zoom = Math.Clamp(Zoom + amount, minZoom, maxZoom);
     }
 
     public void ZoomOut(float amount)
     {
-        Zoom -= amount;
+        Zoom = Math.Clamp(Zoom - amount, minZoom, maxZoom);
     }
 
     public void Update(float deltaTime)
