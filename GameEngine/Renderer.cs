@@ -64,7 +64,7 @@ public class Renderer
         Matrix4 rotationMatrix = rotationX * rotationY * rotationZ;
         Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
 
-        return Matrix4.CreateTranslation(-center) * rotationMatrix * Matrix4.CreateTranslation(center) * scaleMatrix  * translationMatrix;
+        return Matrix4.CreateTranslation(-center) * scaleMatrix * Matrix4.CreateTranslation(center) * rotationMatrix * translationMatrix;
     }
 
     public void RenderMesh(Mesh mesh, Matrix4 modelMatrix, Matrix4 viewMatrix, Matrix4 projectionMatrix, string texturePath = null)

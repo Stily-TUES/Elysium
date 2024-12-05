@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = OpenTK.Mathematics.Vector3;
 
-
-
-
 namespace GameEngine;
 
 public class Camera
@@ -23,7 +20,7 @@ public class Camera
     private float minZoom = 0.28f;
     private Vector2 targetPosition;
     private float moveSpeed = 5.0f;
-    private float zoomSpeed = 0.1f;
+    private float zoomSpeed = 0.05f;
     public Vector3 Up { get; set; } = Vector3.UnitY;
 
     public Camera()

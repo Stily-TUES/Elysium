@@ -74,7 +74,7 @@ public class Transform : Component
     }
 
     private Vector3 _rotation;
-    [DataMember]
+    
     public Vector3 Rotation
     {
         get => _rotation;
@@ -88,7 +88,7 @@ public class Transform : Component
             }
         }
     }
-    
+    [DataMember]
     public float RotationZ
     {
         get => Rotation.Z;
