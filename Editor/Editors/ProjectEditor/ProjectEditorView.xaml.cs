@@ -105,14 +105,17 @@ public partial class ProjectEditorView : UserControl
 
         if (e.Button == System.Windows.Forms.MouseButtons.Right)
         {
-            camera.Move(new Vector2(deltaX, -deltaY));
+            camera.Move(new Vector2(-deltaX, deltaY));
         }
         if (e.Button == System.Windows.Forms.MouseButtons.Left)
         {
             //OnStartDrag(lastMousePosition);
             //OnDrag(lastMousePosition);
+            if (selectedEntity != null)
+            {
             selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
             glControl.Invalidate();
+        }
         }
         lastMousePosition = new Point(e.X, e.Y);
     }
@@ -139,7 +142,10 @@ public partial class ProjectEditorView : UserControl
             {
                 selectedEntity = selectedEntities.OrderBy(x => x.Transform.Position.Z).Last();
                 
-                dragDelta = mousePosition;
+            }
+            else
+            {
+                selectedEntity = null;
             }
         }
     }

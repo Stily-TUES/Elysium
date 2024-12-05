@@ -90,7 +90,7 @@ public class GameEntity : BaseViewModel
             Texture = new TextureFile();
         }
         Mesh squareMesh = Mesh.CreateSquare(1.0f);
-        Matrix4 modelMatrix = Transform.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero);
+        Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
 
     }

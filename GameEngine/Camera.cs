@@ -51,16 +51,13 @@ public class Camera
 
     public Matrix4 GetViewMatrix()
     {
-        Vector3 cameraPosition = new Vector3(Position.X, Position.Y, 1.0f);
-        Vector3 cameraTarget = new Vector3(Position.X, Position.Y, 0.0f);
+        return Matrix4.CreateTranslation(-Position.X, -Position.Y, 0);
+    }
         return Matrix4.LookAt(cameraPosition, cameraTarget, Up);
     }
 
-    public Matrix4 GetProjectionMatrix(float aspectRatio, float fov = 45.0f, float near = 0.1f, float far = 100.0f)
+    public Matrix4 GetProjectionMatrix(float aspectRatio)
     {
-        //float adjustedFov = fov / Zoom;
-        //adjustedFov = MathHelper.Clamp(adjustedFov, 1.0f, 179.0f);
-        return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), aspectRatio, near, far) * 
-                Matrix4.CreateScale(Zoom, Zoom, 1);
+        return Matrix4.CreateScale(Zoom, Zoom, 1) * Matrix4.CreateOrthographic(aspectRatio, 1, -1, 1);
     }
 }
