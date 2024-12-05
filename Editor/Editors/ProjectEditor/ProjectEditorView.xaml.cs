@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using OpenTK.Mathematics;
 using Vector2 = System.Numerics.Vector2;
+using Editor.Components;
 
 namespace Editor.Editors;
 
@@ -32,8 +33,10 @@ public partial class ProjectEditorView : UserControl
     private Renderer renderer;
     private Camera camera;
     private Point lastMousePosition;
-    private float cameraSensitivity = 0.01f;
     private float aspectRatio;
+    private GameEntity selectedEntity;
+    private bool isDragging; 
+    private Vector2 dragDelta;
 
     public ProjectEditorView()
     {
@@ -97,13 +100,21 @@ public partial class ProjectEditorView : UserControl
 
     private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
+        var deltaX = (float)(e.X - lastMousePosition.X) / camera.Zoom / glControl.Height;
+        var deltaY = (float)(e.Y - lastMousePosition.Y) / camera.Zoom / glControl.Height;
+
         if (e.Button == System.Windows.Forms.MouseButtons.Right)
         {
-            var deltaX = (float)(e.X - lastMousePosition.X) * cameraSensitivity;
-            var deltaY = (float)(e.Y - lastMousePosition.Y) * cameraSensitivity;
             camera.Move(new Vector2(deltaX, -deltaY));
-            lastMousePosition = new Point(e.X, e.Y);
         }
+        if (e.Button == System.Windows.Forms.MouseButtons.Left)
+        {
+            //OnStartDrag(lastMousePosition);
+            //OnDrag(lastMousePosition);
+            selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
+            glControl.Invalidate();
+        }
+        lastMousePosition = new Point(e.X, e.Y);
     }
 
     private void GlControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -111,6 +122,25 @@ public partial class ProjectEditorView : UserControl
         if (e.Button == System.Windows.Forms.MouseButtons.Right)
         {
             lastMousePosition = new Point(e.X, e.Y);
+        }
+        if (e.Button == System.Windows.Forms.MouseButtons.Left)
+        {
+            var entities = projectManager.GetActiveScene().GameEntities;
+            List<GameEntity> selectedEntities = new List<GameEntity>();
+            var mousePosition = new Vector2(e.X / (float)glControl.Width, 1 - e.Y / (float)glControl.Height);
+            foreach (var entity in entities)
+            {
+                if (entity.IsInside(mousePosition))
+                {
+                    selectedEntities.Add(entity);
+                }
+            }
+            if (selectedEntities.Any())
+            {
+                selectedEntity = selectedEntities.OrderBy(x => x.Transform.Position.Z).Last();
+                
+                dragDelta = mousePosition;
+            }
         }
     }
 
@@ -131,6 +161,10 @@ public partial class ProjectEditorView : UserControl
         if (e.Button == System.Windows.Forms.MouseButtons.Right)
         {
             lastMousePosition = new Point(0, 0);
+        }
+        if (e.Button == System.Windows.Forms.MouseButtons.Left)
+        {
+            isDragging = false;
         }
     }
 

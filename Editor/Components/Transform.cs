@@ -160,6 +160,18 @@ public class Transform : Component
         }
     }
 
+    public Matrix4 CreateModelMatrix(Vector3 position, Vector3 rotation, Vector3 scale, Vector3 center)
+    {
+        Matrix4 scaleMatrix = Matrix4.CreateScale(scale);
+        Matrix4 rotationX = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotation.X));
+        Matrix4 rotationY = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rotation.Y));
+        Matrix4 rotationZ = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rotation.Z));
+        Matrix4 rotationMatrix = rotationX * rotationY * rotationZ;
+        Matrix4 translationMatrix = Matrix4.CreateTranslation(position);
+
+        return Matrix4.CreateTranslation(-center) * scaleMatrix * Matrix4.CreateTranslation(center) * rotationMatrix * translationMatrix;
+    }
+
     public Transform(GameEntity owner) : base(owner)
     {
     }

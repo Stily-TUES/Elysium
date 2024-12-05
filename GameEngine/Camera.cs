@@ -36,12 +36,12 @@ public class Camera
 
     public void ZoomIn(float amount)
     {
-        Zoom = Math.Clamp(Zoom + amount, minZoom, maxZoom);
+        Zoom *= (float)Math.Pow(2, amount);
     }
 
     public void ZoomOut(float amount)
     {
-        Zoom = Math.Clamp(Zoom - amount, minZoom, maxZoom);
+        Zoom *= (float)Math.Pow(2, -amount);
     }
 
     public void Update(float deltaTime)
@@ -58,8 +58,9 @@ public class Camera
 
     public Matrix4 GetProjectionMatrix(float aspectRatio, float fov = 45.0f, float near = 0.1f, float far = 100.0f)
     {
-        float adjustedFov = fov / Zoom;
-        adjustedFov = MathHelper.Clamp(adjustedFov, 1.0f, 179.0f); 
-        return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(adjustedFov), aspectRatio, near, far);
+        //float adjustedFov = fov / Zoom;
+        //adjustedFov = MathHelper.Clamp(adjustedFov, 1.0f, 179.0f);
+        return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), aspectRatio, near, far) * 
+                Matrix4.CreateScale(Zoom, Zoom, 1);
     }
 }

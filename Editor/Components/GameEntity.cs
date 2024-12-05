@@ -69,6 +69,19 @@ public class GameEntity : BaseViewModel
         Name = newName;
         OnPropertyChanged(nameof(Name));
     }
+
+    public bool IsInside(System.Numerics.Vector2 point)
+    {
+        Vector4 tempPt = new Vector4(point.X, point.Y, 0, 1);
+        tempPt = tempPt * Transform.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero).Inverted();
+        tempPt /= tempPt.W;
+        point = new System.Numerics.Vector2(tempPt.X, tempPt.Y);
+        if (point.X < 0 || point.X > 1 || point.Y < 0 || point.Y > 1)
+        {
+            return false;
+        }
+        return true;
+    }
     public void Render(Camera camera, float aspectRatio)
     {
         Renderer renderer = new Renderer();
@@ -77,7 +90,7 @@ public class GameEntity : BaseViewModel
             Texture = new TextureFile();
         }
         Mesh squareMesh = Mesh.CreateSquare(1.0f);
-        Matrix4 modelMatrix = renderer.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero);
+        Matrix4 modelMatrix = Transform.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero);
         renderer.RenderMesh(squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
 
     }
