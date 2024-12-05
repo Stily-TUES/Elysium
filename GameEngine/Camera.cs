@@ -53,7 +53,7 @@ public class Camera
     {
         return Matrix4.CreateTranslation(-Position.X, -Position.Y, 0);
     }
-        return Matrix4.LookAt(cameraPosition, cameraTarget, Up);
+
     }
 
     public Matrix4 GetProjectionMatrix(float aspectRatio)
