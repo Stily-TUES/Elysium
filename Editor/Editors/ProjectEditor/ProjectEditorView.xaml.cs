@@ -17,8 +17,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using OpenTK.Mathematics;
-using Vector2 = System.Numerics.Vector2;
+using Vector2 = OpenTK.Mathematics.Vector2;
 using Editor.Components;
+using System.Diagnostics;
 
 namespace Editor.Editors;
 
@@ -34,9 +35,9 @@ public partial class ProjectEditorView : UserControl
     private Camera camera;
     private Point lastMousePosition;
     private float aspectRatio;
-    private GameEntity selectedEntity;
+    private GameEntity? selectedEntity;
     private bool isDragging; 
-    private Vector2 dragDelta;
+    private OpenTK.Mathematics.Vector2 dragDelta;
 
     public ProjectEditorView()
     {
@@ -109,13 +110,11 @@ public partial class ProjectEditorView : UserControl
         }
         if (e.Button == System.Windows.Forms.MouseButtons.Left)
         {
-            //OnStartDrag(lastMousePosition);
-            //OnDrag(lastMousePosition);
             if (selectedEntity != null)
             {
-            selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
-            glControl.Invalidate();
-        }
+                selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
+                glControl.Invalidate();
+            }
         }
         lastMousePosition = new Point(e.X, e.Y);
     }
@@ -130,7 +129,9 @@ public partial class ProjectEditorView : UserControl
         {
             var entities = projectManager.GetActiveScene().GameEntities;
             List<GameEntity> selectedEntities = new List<GameEntity>();
-            var mousePosition = new Vector2(e.X / (float)glControl.Width, 1 - e.Y / (float)glControl.Height);
+            var mousePosition = camera.ScreenToWorldSpace(new(e.X, e.Y), glControl.Width, glControl.Height);
+            Debug.WriteLine("MOUSE " + mousePosition);
+
             foreach (var entity in entities)
             {
                 if (entity.IsInside(mousePosition))
@@ -141,7 +142,7 @@ public partial class ProjectEditorView : UserControl
             if (selectedEntities.Any())
             {
                 selectedEntity = selectedEntities.OrderBy(x => x.Transform.Position.Z).Last();
-                
+                dragDelta = mousePosition.Xy;
             }
             else
             {
@@ -171,6 +172,7 @@ public partial class ProjectEditorView : UserControl
         if (e.Button == System.Windows.Forms.MouseButtons.Left)
         {
             isDragging = false;
+
         }
     }
 

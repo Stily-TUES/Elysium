@@ -23,6 +23,7 @@ namespace Editor.Components;
 [KnownType(typeof(Transform))]
 public class GameEntity : BaseViewModel
 {
+    //private Mesh squareMesh = Mesh.CreateSquare(1.0f);
     private static int _nextId = 1;
     private string _name;
     [DataMember]
@@ -70,13 +71,12 @@ public class GameEntity : BaseViewModel
         OnPropertyChanged(nameof(Name));
     }
 
-    public bool IsInside(System.Numerics.Vector2 point)
+    public bool IsInside(Vector4 point)
     {
-        Vector4 tempPt = new Vector4(point.X, point.Y, 0, 1);
-        tempPt = tempPt * Transform.CreateModelMatrix(Transform.Position, Transform.Rotation, Transform.Scale, Vector3.Zero).Inverted();
-        tempPt /= tempPt.W;
-        point = new System.Numerics.Vector2(tempPt.X, tempPt.Y);
-        if (point.X < 0 || point.X > 1 || point.Y < 0 || point.Y > 1)
+        point = Transform.WorldToObjectSpace(point);
+        var point2 = point.Xy / point.W;
+
+        if (point2.X < -0.5f || point2.X > 0.5f || point2.Y < -0.5f || point2.Y > 0.5f)
         {
             return false;
         }

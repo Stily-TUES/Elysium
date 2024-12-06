@@ -173,6 +173,14 @@ public class Transform : Component
 
         return Matrix4.CreateTranslation(-origin) * scaleMatrix * Matrix4.CreateTranslation(origin) * rotationMatrix * translationMatrix;
     }
+
+    public Vector4 WorldToObjectSpace(Vector4 vec)
+    {
+        return vec * CreateModelMatrix().Inverted();
+    }
+    public Vector4 ObjectToWorldSpace(Vector4 vec)
+    {
+        return vec * CreateModelMatrix();
     }
 
     public Transform(GameEntity owner) : base(owner)

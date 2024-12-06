@@ -2,25 +2,23 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Vector2 = System.Numerics.Vector2;
+using System.Diagnostics;
+using Vector2 = OpenTK.Mathematics.Vector2;
 using Vector3 = OpenTK.Mathematics.Vector3;
+using Vector4 = OpenTK.Mathematics.Vector4;
 
 namespace GameEngine;
 
 public class Camera
 {
     public Vector2 Position { get; set; }
-    public float Zoom { get; set; } = 0.5f;
+    public float Zoom { get; set; } = 1;
     private float maxZoom = 50.0f;
     private float minZoom = 0.28f;
     private Vector2 targetPosition;
     private float moveSpeed = 5.0f;
-    private float zoomSpeed = 0.05f;
+    private float zoomSpeed = 0.5f;
     public Vector3 Up { get; set; } = Vector3.UnitY;
 
     public Camera()
@@ -54,6 +52,25 @@ public class Camera
         return Matrix4.CreateTranslation(-Position.X, -Position.Y, 0);
     }
 
+    public Vector4 ScreenToGLSpace(Vector2 pos, float w, float h)
+    {
+        var res = new Vector4(pos.X / w * 2 - 1, -(pos.Y / h * 2 - 1), 0, 1);
+        return res;
+    }
+    public Vector4 GLToScreenSpace(Vector4 pos, float w, float h)
+    {
+        return new Vector4(pos.X / 2 * w + 1, -(pos.Y / 2 * h + 1), 0, 1);
+    }
+
+    public Vector4 ScreenToWorldSpace(Vector2 pos, float w, float h)
+    {
+        var res = ScreenToGLSpace(pos, w, h) * GetProjectionMatrix(w / h).Inverted() * GetViewMatrix().Inverted();
+        return res;
+    }
+    public Vector2 WorldToScreenSpace(Vector4 pos, float w, float h)
+    {
+        var res = GLToScreenSpace(pos * GetProjectionMatrix(w / h) * GetViewMatrix(), w, h);
+        return res.Xy / res.W;
     }
 
     public Matrix4 GetProjectionMatrix(float aspectRatio)
