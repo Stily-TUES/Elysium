@@ -23,7 +23,7 @@ namespace Editor.Components;
 [KnownType(typeof(Transform))]
 public class GameEntity : BaseViewModel
 {
-    //private Mesh squareMesh = Mesh.CreateSquare(1.0f);
+    private static Mesh _squareMesh;
     private static int _nextId = 1;
     private string _name;
     [DataMember]
@@ -70,6 +70,10 @@ public class GameEntity : BaseViewModel
         Name = newName;
         OnPropertyChanged(nameof(Name));
     }
+    static GameEntity()
+    {
+        _squareMesh = Mesh.CreateSquare(1.0f);
+    }
 
     public bool IsInside(Vector4 point)
     {
@@ -89,9 +93,9 @@ public class GameEntity : BaseViewModel
         {
             Texture = new TextureFile();
         }
-        Mesh squareMesh = Mesh.CreateSquare(1.0f);
+        //Mesh squareMesh = Mesh.CreateSquare(1.0f);
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
-        renderer.RenderMesh(squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
+        renderer.RenderMesh(_squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
 
     }
     public GameEntity(Scene parentScene)
