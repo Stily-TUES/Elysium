@@ -37,7 +37,8 @@ public partial class ProjectEditorView : UserControl
     private float aspectRatio;
     private GameEntity? selectedEntity;
     private bool isDragging; 
-    private OpenTK.Mathematics.Vector2 dragDelta;
+    private Vector2 dragDelta;
+    private int backgroundTextureId;
 
     public ProjectEditorView()
     {

@@ -1,12 +1,14 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using static OpenTK.Graphics.OpenGL.GL;
 
 public class Mesh
 {
-
     private int VAO, VBO, EBO;
 
-    public Mesh(float[] vertices, uint[] indices)
+    public Mesh(float[] vertices, uint[] indices, string texturePath = null)
     {
         VAO = GL.GenVertexArray();
         VBO = GL.GenBuffer();
@@ -29,13 +31,24 @@ public class Mesh
         GL.BindVertexArray(0);
     }
 
-    public void Render()
+    public void Render(int shaderProgram, int textureId)
     {
+        if (textureId > 0)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, textureId);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "texture1"), 0);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 1);
+        }
+        else
+        {
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 0);
+        }
+
         GL.BindVertexArray(VAO);
         GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
         GL.BindVertexArray(0);
     }
-
 
     public void Dispose()
     {
@@ -49,27 +62,27 @@ public class Mesh
         float halfSide = sideLength / 2;
 
         float[] vertices = {
-            // positions           // texture coords
-            -halfSide, -halfSide, 0.0f,  0.0f, 1.0f,
-             halfSide, -halfSide, 0.0f,  1.0f, 1.0f, 
-             halfSide,  halfSide, 0.0f,  1.0f, 0.0f, 
-            -halfSide,  halfSide, 0.0f,  0.0f, 0.0f  
-        };
+                         // positions           // texture coords
+                         -halfSide, -halfSide, 0.0f,  0.0f, 1.0f,
+                          halfSide, -halfSide, 0.0f,  1.0f, 1.0f,
+                          halfSide,  halfSide, 0.0f,  1.0f, 0.0f,
+                         -halfSide,  halfSide, 0.0f,  0.0f, 0.0f
+                     };
 
         uint[] indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
+                         0, 1, 2,
+                         2, 3, 0
+                     };
 
         return new Mesh(vertices, indices);
     }
 
-    public static Mesh CreateCircle(float radius, int segments)
+    public static Mesh CreateCircle(float radius, int segments, string texturePath = null)
     {
         List<float> vertices = new();
         List<uint> indices = new();
 
-        vertices.AddRange(new float[] { 0.0f, 0.0f, 0.0f, 0.5f, 0.5f }); 
+        vertices.AddRange(new float[] { 0.0f, 0.0f, 0.0f, 0.5f, 0.5f });
 
         for (int i = 0; i <= segments; i++)
         {
@@ -87,6 +100,6 @@ public class Mesh
             }
         }
 
-        return new Mesh(vertices.ToArray(), indices.ToArray());
+        return new Mesh(vertices.ToArray(), indices.ToArray(), texturePath);
     }
 }

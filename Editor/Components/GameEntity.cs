@@ -16,6 +16,9 @@ using OpenTK.Mathematics;
 using Camera = GameEngine.Camera;
 using Vector3 = OpenTK.Mathematics.Vector3;
 using System.Windows.Media.Imaging;
+using System.Drawing.Imaging;
+using System.Drawing;
+using OpenTK.Graphics.OpenGL;
 
 namespace Editor.Components;
 
@@ -23,9 +26,11 @@ namespace Editor.Components;
 [KnownType(typeof(Transform))]
 public class GameEntity : BaseViewModel
 {
-    private static Mesh _squareMesh;
     private static int _nextId = 1;
     private string _name;
+    private TextureFile _texture = null;
+    internal int _textureId = -1;
+
     [DataMember]
     public string Name
     {
@@ -53,6 +58,9 @@ public class GameEntity : BaseViewModel
             }
         }
     }
+
+    private Mesh _squareMesh;
+
     [DataMember]
     //adding id so when we rename the entity we can still find it
     public int EntityId { get; private set; }
@@ -62,7 +70,20 @@ public class GameEntity : BaseViewModel
     [DataMember]
     public Transform Transform { get; set; }
     [DataMember]
-    public TextureFile Texture { get; set; }
+    public TextureFile Texture {
+        get => _texture;
+        set
+        {
+            if (_texture == value) return;
+
+            var texturePath = value.ImagePath;
+
+            if (!string.IsNullOrEmpty(texturePath)) _textureId = Renderer.LoadTexture(texturePath);
+            else _textureId = -1;
+
+            this._texture = value;
+        }
+    }
     [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
     public void Rename(string newName)
@@ -72,7 +93,6 @@ public class GameEntity : BaseViewModel
     }
     static GameEntity()
     {
-        _squareMesh = Mesh.CreateSquare(1.0f);
     }
 
     public bool IsInside(Vector4 point)
@@ -89,13 +109,10 @@ public class GameEntity : BaseViewModel
     public void Render(Camera camera, float aspectRatio)
     {
         Renderer renderer = new Renderer();
-        if (Texture == null)
-        {
-            Texture = new TextureFile();
-        }
+
         //Mesh squareMesh = Mesh.CreateSquare(1.0f);
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
-        renderer.RenderMesh(_squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio), Texture.ImagePath);
+        renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
 
     }
     public GameEntity(Scene parentScene)
@@ -104,6 +121,7 @@ public class GameEntity : BaseViewModel
         ParentScene = parentScene;
         EntityId = _nextId++;
         Transform = new Transform(this);
+        _squareMesh = Mesh.CreateSquare(1.0f);
         //Components.Add(new Transform(this));
     }
 

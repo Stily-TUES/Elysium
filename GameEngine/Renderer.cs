@@ -20,6 +20,7 @@ public class Renderer
     {
         shaderProgram = CreateShaderProgram("../../../../GameEngine/Shaders/shader.vert", "../../../../GameEngine/Shaders/shader.frag");
     }
+
     private int CreateShaderProgram(string vertexPath, string fragmentPath)
     {
         string vertexShaderSource = File.ReadAllText(vertexPath);
@@ -55,30 +56,15 @@ public class Renderer
         return shader;
     }
 
-    public void RenderMesh(Mesh mesh, Matrix4 modelMatrix, Matrix4 viewMatrix, Matrix4 projectionMatrix, string texturePath = null)
+    public void RenderMesh(int textureId, Mesh mesh, Matrix4 modelMatrix, Matrix4 viewMatrix, Matrix4 projectionMatrix)
     {
         GL.UseProgram(shaderProgram);
-        
+
         Matrix4 transformMatrix = modelMatrix * viewMatrix * projectionMatrix;
         int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
         GL.UniformMatrix4(transformLoc, false, ref transformMatrix);
-
-        if (!string.IsNullOrEmpty(texturePath))
-        {
-            int textureId = LoadTexture(texturePath);
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, textureId);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "texture1"), 0);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 1);
-        }
-        else
-        {
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 0);
-        }
-
-        mesh.Render();
+        mesh.Render(shaderProgram, textureId);
     }
-
     public void RenderBackground(string texturePath)
     {
         Mesh backgroundMesh = Mesh.CreateSquare(2.0f);
@@ -87,31 +73,22 @@ public class Renderer
 
         int isBackgroundLoc = GL.GetUniformLocation(shaderProgram, "isBackground");
         GL.Uniform1(isBackgroundLoc, 1);
-
-        if (!string.IsNullOrEmpty(texturePath))
-        {
-            int textureId = LoadTexture(texturePath);
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, textureId);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "texture1"), 0);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 1);
-        }
-        else
-        {
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "useTexture"), 0);
-        }
+        var textureId = LoadTexture(texturePath);
 
         Matrix4 modelMatrix = Matrix4.Identity;
         Matrix4 viewMatrix = Matrix4.Identity;
-        Matrix4 projectionMatrix = Matrix4.Identity; 
+        Matrix4 projectionMatrix = Matrix4.Identity;
 
-        RenderMesh(backgroundMesh, modelMatrix, viewMatrix, projectionMatrix, texturePath);
+        RenderMesh(textureId, backgroundMesh, modelMatrix, viewMatrix, projectionMatrix);
 
         backgroundMesh.Dispose();
     }
 
-    public int LoadTexture(string path)
+
+    public static int LoadTexture(string path)
     {
+        if (path == null) return -1;
+
         int textureId = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, textureId);
 
