@@ -29,7 +29,7 @@ public class GameEntity : BaseViewModel
     private static int _nextId = 1;
     private string _name;
     private TextureFile _texture = null;
-    internal int _textureId = -1;
+    private int _textureId = -1;
 
     [DataMember]
     public string Name

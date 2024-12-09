@@ -15,6 +15,7 @@ namespace GameEngine;
 public class Renderer
 {
     private int shaderProgram;
+    private int _backgroundTextureId;
     public static void Main() { }
     public Renderer()
     {
@@ -68,18 +69,20 @@ public class Renderer
     public void RenderBackground(string texturePath)
     {
         Mesh backgroundMesh = Mesh.CreateSquare(2.0f);
-
+        if (_backgroundTextureId <= 0 )
+        {
+            _backgroundTextureId = LoadTexture(texturePath);
+        }
         GL.UseProgram(shaderProgram);
 
         int isBackgroundLoc = GL.GetUniformLocation(shaderProgram, "isBackground");
         GL.Uniform1(isBackgroundLoc, 1);
-        var textureId = LoadTexture(texturePath);
 
         Matrix4 modelMatrix = Matrix4.Identity;
         Matrix4 viewMatrix = Matrix4.Identity;
         Matrix4 projectionMatrix = Matrix4.Identity;
 
-        RenderMesh(textureId, backgroundMesh, modelMatrix, viewMatrix, projectionMatrix);
+        RenderMesh(_backgroundTextureId, backgroundMesh, modelMatrix, viewMatrix, projectionMatrix);
 
         backgroundMesh.Dispose();
     }
