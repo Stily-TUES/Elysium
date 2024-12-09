@@ -29,7 +29,22 @@ public class GameEntity : BaseViewModel
     private static int _nextId = 1;
     private string _name;
     private TextureFile _texture = null;
-    private int _textureId = -1;
+    private int _cachedTextureId = -1;
+    private bool _textureInvalidated = true;
+
+    private int _textureId
+    {
+        get
+        {
+            if (_textureInvalidated)
+            {
+                if (_cachedTextureId <= 0) GL.DeleteTexture(_cachedTextureId);
+                _cachedTextureId = Renderer.LoadTexture(_texture.ImagePath);
+            }
+            return _cachedTextureId;
+
+        }
+    }
 
     [DataMember]
     public string Name
@@ -59,7 +74,10 @@ public class GameEntity : BaseViewModel
         }
     }
 
-    private Mesh _squareMesh;
+    private static Mesh _squareMeshCache;
+
+    private static Mesh _squareMesh => _squareMeshCache ??= Mesh.CreateSquare(1.0f);
+
 
     [DataMember]
     //adding id so when we rename the entity we can still find it
@@ -74,14 +92,8 @@ public class GameEntity : BaseViewModel
         get => _texture;
         set
         {
-            if (_texture == value) return;
-
-            var texturePath = value.ImagePath;
-
-            if (!string.IsNullOrEmpty(texturePath)) _textureId = Renderer.LoadTexture(texturePath);
-            else _textureId = -1;
-
-            this._texture = value;
+            _textureInvalidated = _texture != value;
+            _texture = value;
         }
     }
     [IgnoreDataMember]
@@ -90,9 +102,6 @@ public class GameEntity : BaseViewModel
     {
         Name = newName;
         OnPropertyChanged(nameof(Name));
-    }
-    static GameEntity()
-    {
     }
 
     public bool IsInside(Vector4 point)
@@ -121,7 +130,6 @@ public class GameEntity : BaseViewModel
         ParentScene = parentScene;
         EntityId = _nextId++;
         Transform = new Transform(this);
-        _squareMesh = Mesh.CreateSquare(1.0f);
         //Components.Add(new Transform(this));
     }
 

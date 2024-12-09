@@ -131,7 +131,6 @@ public partial class ProjectEditorView : UserControl
             var entities = projectManager.GetActiveScene().GameEntities;
             List<GameEntity> selectedEntities = new List<GameEntity>();
             var mousePosition = camera.ScreenToWorldSpace(new(e.X, e.Y), glControl.Width, glControl.Height);
-            Debug.WriteLine("MOUSE " + mousePosition);
 
             foreach (var entity in entities)
             {
