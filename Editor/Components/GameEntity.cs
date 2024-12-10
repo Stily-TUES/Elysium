@@ -40,6 +40,7 @@ public class GameEntity : BaseViewModel
             {
                 if (_cachedTextureId <= 0) GL.DeleteTexture(_cachedTextureId);
                 _cachedTextureId = Renderer.LoadTexture(_texture.ImagePath);
+                _textureInvalidated = false;
             }
             return _cachedTextureId;
 
@@ -122,7 +123,6 @@ public class GameEntity : BaseViewModel
         //Mesh squareMesh = Mesh.CreateSquare(1.0f);
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
-
     }
     public GameEntity(Scene parentScene)
     {

@@ -16,21 +16,19 @@ public class RemoveSceneCommand : UndoRedo
 
     public override void Apply()
     {
-        Debug.Assert(Project.Scenes.Any(s => s.Name == Name));
-
         _removedScene = Project.Scenes.FirstOrDefault(s => s.Name == Name);
-        if (_removedScene != null)
+        if (_removedScene != null && !_removedScene.isLoaded)
         {
+            Debug.Assert(Project.Scenes.Any(s => s.Name == Name));
             Project.Scenes.Remove(_removedScene);
         }
     }
 
     public override void Undo()
     {
-        Debug.Assert(!Project.Scenes.Any(s => s.Name == Name));
-
         if (_removedScene != null)
         {
+            Debug.Assert(!Project.Scenes.Any(s => s.Name == Name));
             Project.Scenes.Add(_removedScene);
         }
     }
