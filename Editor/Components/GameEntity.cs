@@ -28,7 +28,7 @@ public class GameEntity : BaseViewModel
 {
     private static int _nextId = 1;
     private string _name;
-    private TextureFile _texture = null;
+    private TextureFile _texture = new TextureFile();
     private int _cachedTextureId = -1;
     private bool _textureInvalidated = true;
 

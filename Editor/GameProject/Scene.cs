@@ -48,6 +48,7 @@ public class Scene : BaseViewModel
             }
         }
     }
+    public bool isNotLoaded => !isLoaded;
 
     [DataMember]
     public ObservableCollection<GameEntity> GameEntities { get; set; }

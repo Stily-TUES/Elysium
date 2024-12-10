@@ -66,9 +66,8 @@ public class Renderer
         GL.UniformMatrix4(transformLoc, false, ref transformMatrix);
         mesh.Render(shaderProgram, textureId);
     }
-    public void RenderBackground(string texturePath)
+    public void RenderBackground(Mesh mesh, string texturePath)
     {
-        Mesh backgroundMesh = Mesh.CreateSquare(2.0f);
         if (_backgroundTextureId <= 0 )
         {
             _backgroundTextureId = LoadTexture(texturePath);
@@ -82,11 +81,8 @@ public class Renderer
         Matrix4 viewMatrix = Matrix4.Identity;
         Matrix4 projectionMatrix = Matrix4.Identity;
 
-        RenderMesh(_backgroundTextureId, backgroundMesh, modelMatrix, viewMatrix, projectionMatrix);
-
-        backgroundMesh.Dispose();
+        RenderMesh(_backgroundTextureId, mesh, modelMatrix, viewMatrix, projectionMatrix);
     }
-
 
     public static int LoadTexture(string path)
     {

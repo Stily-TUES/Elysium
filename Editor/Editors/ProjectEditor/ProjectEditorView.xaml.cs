@@ -20,6 +20,7 @@ using OpenTK.Mathematics;
 using Vector2 = OpenTK.Mathematics.Vector2;
 using Editor.Components;
 using System.Diagnostics;
+using static OpenTK.Graphics.OpenGL.GL;
 
 namespace Editor.Editors;
 
@@ -39,6 +40,7 @@ public partial class ProjectEditorView : UserControl
     private bool isDragging; 
     private Vector2 dragDelta;
     private int backgroundTextureId;
+    private Mesh backgroundMesh;
 
     public ProjectEditorView()
     {
@@ -69,6 +71,7 @@ public partial class ProjectEditorView : UserControl
 
         camera = new Camera();
         renderer = new Renderer();
+        backgroundMesh = Mesh.CreateSquare(2.0f);
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -81,6 +84,8 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseWheel -= GlControl_MouseWheel;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
+
+        backgroundMesh.Dispose();
     }
 
     private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -185,7 +190,7 @@ public partial class ProjectEditorView : UserControl
             {
                 projectManager.GetActiveScene().Background = new TextureFile();
             }
-            renderer.RenderBackground(projectManager.GetActiveScene().Background.ImagePath);
+            renderer.RenderBackground(backgroundMesh, projectManager.GetActiveScene().Background.ImagePath);
             projectManager.RenderProject(camera, aspectRatio);
             glControl.SwapBuffers();
         }

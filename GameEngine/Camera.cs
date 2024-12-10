@@ -19,7 +19,6 @@ public class Camera
     private Vector2 targetPosition;
     private float moveSpeed = 5.0f;
     private float zoomSpeed = 0.5f;
-    public Vector3 Up { get; set; } = Vector3.UnitY;
 
     public Camera()
     {

@@ -31,7 +31,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding Name}" Grid.Column="0" Foreground="White" MouseLeftButtonDown="OnSceneName_Click"/>
-                                    <Button Content="Remove" Margin="20, 0" Tag="{Binding Name}" Click="OnRemoveSceneButton_Click" Grid.Column="1"/>
+                                    <Button Content="Remove" Margin="20, 0" Tag="{Binding Name}" IsEnabled="{Binding isNotLoaded}" Click="OnRemoveSceneButton_Click" Grid.Column="1"/>
                                     <Button Content="Аdd entity" Margin="0, 0, 20, 0" Click="OnAddEntityButton_Click" Grid.Column="2" IsEnabled="{Binding isLoaded}"/>
                                     <Border BorderBrush="White" Grid.Column="3" BorderThickness="1" AllowDrop="True" Drop="OnTextureDrop" IsEnabled="{Binding isLoaded}">
                                         <TextBlock Text="Drag and drop background file here" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" IsEnabled="{Binding isLoaded}"/>
