@@ -37,6 +37,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="X" Foreground="White" HorizontalAlignment="Center"/>
@@ -53,8 +54,12 @@
                 <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Transform.ScaleY}" Background="#2a2f28" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
                 <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Transform.ScaleZ}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
                 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Rotation" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Rotation" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Width="50"/>
                 <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Transform.RotationZ}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Mass" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Width="50"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Mass}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" />
+
             </Grid>
 
         </StackPanel>

@@ -31,7 +31,8 @@ public class GameEntity : BaseViewModel
     private TextureFile _texture = new TextureFile();
     private int _cachedTextureId = -1;
     private bool _textureInvalidated = true;
-
+    private Physics _physics;
+    private float _mass = 1.0f;
     private int _textureId
     {
         get
@@ -77,17 +78,44 @@ public class GameEntity : BaseViewModel
 
     private static Mesh _squareMeshCache;
 
-    private static Mesh _squareMesh => _squareMeshCache ??= Mesh.CreateSquare(1.0f);
+    private static Mesh _squareMesh
+    {
+        get
+        {
+            if (_squareMeshCache == null)
+            {
+                _squareMeshCache = Mesh.CreateSquare(1.0f);
+            }
+            return _squareMeshCache;
+        }
+    }
 
+    [DataMember]
+    public float Mass 
+    {
+        get => _mass;
+        set
+        {
+            if (_mass != value)
+            {
+                _mass = value;
+                OnPropertyChanged(nameof(Mass));
+            }
+        }
+    }
 
     [DataMember]
     //adding id so when we rename the entity we can still find it
     public int EntityId { get; private set; }
 
+
     //[DataMember]
     //public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
     [DataMember]
     public Transform Transform { get; set; }
+
+
+
     [DataMember]
     public TextureFile Texture {
         get => _texture;
@@ -97,6 +125,7 @@ public class GameEntity : BaseViewModel
             _texture = value;
         }
     }
+
     [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
     public void Rename(string newName)
@@ -124,12 +153,22 @@ public class GameEntity : BaseViewModel
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
     }
+    public void ApplyPhysics(float deltaTime)
+    {
+        _physics.ApplyPhysics(deltaTime, Mass);
+    }
+
+    public void ResetPhysics()
+    {
+        _physics.Reset();
+    }
     public GameEntity(Scene parentScene)
     {
         Debug.Assert(parentScene != null);
         ParentScene = parentScene;
         EntityId = _nextId++;
         Transform = new Transform(this);
+        _physics = new Physics(this);
         //Components.Add(new Transform(this));
     }
 
