@@ -27,8 +27,10 @@
 
         <StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Background="#1a1f27" Height="30">
             <Button Content="Undo" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onUndoButton_Click"/>
-            <Button Content="Redo" Width="70" Margin="5" Background="#2a2f38" Foreground="White" Click="onRedoButton_Click"/>
+            <Button Content="Redo" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onRedoButton_Click"/>
             <Button Content="Save" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onSaveButton_Click"/>
+            <Button Content="Run" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="RunPhysicsButton_Click" />
+            <Button Content="Stop" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="StopPhysicsButton_Click" />
         </StackPanel>
 
         <Border Grid.Row="1" Grid.Column="0" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">

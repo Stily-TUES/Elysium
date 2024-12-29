@@ -24,6 +24,7 @@ namespace Editor.Components;
 
 [DataContract]
 [KnownType(typeof(Transform))]
+[KnownType(typeof(Physics))]
 public class GameEntity : BaseViewModel
 {
     private static int _nextId = 1;
@@ -31,7 +32,6 @@ public class GameEntity : BaseViewModel
     private TextureFile _texture = new TextureFile();
     private int _cachedTextureId = -1;
     private bool _textureInvalidated = true;
-    private Physics _physics;
     private float _mass = 1.0f;
     private int _textureId
     {
@@ -114,7 +114,9 @@ public class GameEntity : BaseViewModel
     [DataMember]
     public Transform Transform { get; set; }
 
+    [DataMember]
 
+    public Physics Physics;
 
     [DataMember]
     public TextureFile Texture {
@@ -155,20 +157,20 @@ public class GameEntity : BaseViewModel
     }
     public void ApplyPhysics(float deltaTime)
     {
-        _physics.ApplyPhysics(deltaTime, Mass);
+        Physics.ApplyPhysics(deltaTime, Mass);
     }
 
     public void ResetPhysics()
     {
-        _physics.Reset();
+        Physics.Reset();
     }
     public GameEntity(Scene parentScene)
     {
         Debug.Assert(parentScene != null);
         ParentScene = parentScene;
         EntityId = _nextId++;
+        Physics = new Physics(this);
         Transform = new Transform(this);
-        _physics = new Physics(this);
         //Components.Add(new Transform(this));
     }
 

@@ -41,6 +41,8 @@ public partial class ProjectEditorView : UserControl
     private Vector2 dragDelta;
     private int backgroundTextureId;
     private Mesh backgroundMesh;
+    private PhysicsManager physicsManager;
+    private bool isPhysicsRunning;
 
     public ProjectEditorView()
     {
@@ -72,6 +74,10 @@ public partial class ProjectEditorView : UserControl
         camera = new Camera();
         renderer = new Renderer();
         backgroundMesh = Mesh.CreateSquare(2.0f);
+
+        var entities = projectManager.GetActiveScene().GameEntities.ToList();
+        physicsManager = new PhysicsManager(entities);
+
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -101,7 +107,12 @@ public partial class ProjectEditorView : UserControl
 
     private void RenderTimer_Tick(object sender, EventArgs e)
     {
-        camera.Update(0.016f);
+        float deltaTime = (float)renderTimer.Interval.TotalSeconds;
+        if (isPhysicsRunning)
+        {
+            physicsManager.OnTick(deltaTime);
+        }
+        camera.Update(deltaTime);
         glControl.Invalidate();
     }
 
@@ -221,6 +232,16 @@ public partial class ProjectEditorView : UserControl
     private void onSaveButton_Click(object sender, RoutedEventArgs e)
     {
         projectManager?.Save();
+    }
+    private void RunPhysicsButton_Click(object sender, RoutedEventArgs e)
+    {
+        isPhysicsRunning = true;
+    }
+
+    private void StopPhysicsButton_Click(object sender, RoutedEventArgs e)
+    {
+        isPhysicsRunning = false;
+        physicsManager.Stop();
     }
 
     private void onTextureDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
