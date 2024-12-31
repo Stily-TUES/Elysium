@@ -11,23 +11,27 @@ namespace Editor.Components;
 [DataContract]
 public class Physics : Component
 {
-    private Vector3 _velocity;
+    public Vector3 Velocity;
+    public bool IsColliding { get; set; }
 
     public Physics(GameEntity owner) : base(owner)
     {
-        _velocity = Vector3.Zero;
+        Velocity = Vector3.Zero;
     }
 
     public void ApplyGravityPhysics(float deltaTime, float mass)
     {
-        float gravity = CalculateGravity(mass);
-        _velocity.Y += gravity * deltaTime;
-        ParentComponent.Transform.Position += _velocity * deltaTime;
+        if (!IsColliding)
+        {
+            float gravity = CalculateGravity(mass);
+            Velocity.Y += gravity * deltaTime;
+        }
+        ParentComponent.Transform.Position += Velocity * deltaTime;
     }
 
     public void Reset()
     {
-        _velocity = Vector3.Zero;
+        Velocity = Vector3.Zero;
     }
 
     private float CalculateGravity(float mass)

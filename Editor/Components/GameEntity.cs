@@ -90,6 +90,20 @@ public class GameEntity : BaseViewModel
             }
         }
     }
+    private bool _hasCollision = true;
+    [DataMember]
+    public bool HasCollision
+    {
+        get => _hasCollision;
+        set
+        {
+            if (_hasCollision != value)
+            {
+                _hasCollision = value;
+                OnPropertyChanged(nameof(HasCollision));
+            }
+        }
+    }
 
     private static Mesh _squareMeshCache;
 
@@ -173,6 +187,18 @@ public class GameEntity : BaseViewModel
     {
         if (HasGravity)
             Physics.ApplyGravityPhysics(deltaTime, Mass);
+    }
+    public bool CheckCollision(GameEntity other)
+    {
+        Vector4 otherPositionInLocalSpace = Transform.WorldToObjectSpace(new Vector4(other.Transform.Position, 1.0f));
+        //Debug.WriteLine($"Entity A Position: {Transform.Position}, Entity B Position: {other.Transform.Position}");
+        //Debug.WriteLine($"Other Position in Local Space: {otherPositionInLocalSpace}");
+
+        Vector3 minA = new Vector3(-0.5f, -0.5f, 0);
+        Vector3 maxA = new Vector3(0.5f, 0.5f, 0);
+
+        return (otherPositionInLocalSpace.X >= minA.X && otherPositionInLocalSpace.X <= maxA.X) &&
+               (otherPositionInLocalSpace.Y >= minA.Y && otherPositionInLocalSpace.Y <= maxA.Y);
     }
 
     public void ResetPhysics()
