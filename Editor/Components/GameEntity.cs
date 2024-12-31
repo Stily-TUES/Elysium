@@ -194,8 +194,8 @@ public class GameEntity : BaseViewModel
         //Debug.WriteLine($"Entity A Position: {Transform.Position}, Entity B Position: {other.Transform.Position}");
         //Debug.WriteLine($"Other Position in Local Space: {otherPositionInLocalSpace}");
 
-        Vector3 minA = new Vector3(-0.5f, -0.5f, 0);
-        Vector3 maxA = new Vector3(0.5f, 0.5f, 0);
+        Vector3 minA = new Vector3(-1f, -1f, 0);
+        Vector3 maxA = new Vector3(1f, 1f, 0);
 
         return (otherPositionInLocalSpace.X >= minA.X && otherPositionInLocalSpace.X <= maxA.X) &&
                (otherPositionInLocalSpace.Y >= minA.Y && otherPositionInLocalSpace.Y <= maxA.Y);

@@ -2,6 +2,8 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -20,67 +22,48 @@ public class PhysicsManager
 
     public void OnTick(float deltaTime)
     {
+        //Debug.WriteLine("PhysicsManager.OnTick");
         foreach (var entity in _entities)
         {
             entity.ApplyPhysics(deltaTime);
+            CheckCollisions(entity, deltaTime);
         }
-        CheckCollisions();
+        
 
-        // Reset collision state
-        foreach (var entity in _entities)
-        {
-            entity.Physics.IsColliding = false;
-        }
+        //// Reset collision state
+        //foreach (var entity in _entities)
+        //{
+        //    entity.Physics.IsColliding = false;
+        //}
     }
-    private void CheckCollisions()
+    private void CheckCollisions(GameEntity entityA, float deltaTime)
     {
-        for (int i = 0; i < _entities.Count; i++)
+
+        for (int j = 0; j < _entities.Count; j++)
         {
-            for (int j = i + 1; j < _entities.Count; j++)
+            var entityB = _entities[j];
+            if (entityA == entityB)
             {
-                var entityA = _entities[i];
-                var entityB = _entities[j];
-
-                if (entityA.IsActive && entityB.IsActive && entityA.HasCollision && entityB.HasCollision)
-                {
-                    if (entityA.CheckCollision(entityB))
-                    {
-                        ResolveCollision(entityA, entityB);
-                    }
-                }
+                continue;
             }
+
+            //if (entityA.IsActive && entityB.IsActive && entityA.HasCollision && entityB.HasCollision)
+            //{
+                if (entityA.CheckCollision(entityB))
+                {
+                    ResolveCollision(entityA, entityB, deltaTime);
+                    break;
+                }
+            //}
         }
     }
 
-    private void ResolveCollision(GameEntity entityA, GameEntity entityB)
+    private void ResolveCollision(GameEntity entityA, GameEntity entityB, float deltaTime)
     {
-        Vector3 direction = entityA.Transform.Position - entityB.Transform.Position;
-        direction.Normalize();
-
-        float distance = Vector3.Distance(entityA.Transform.Position, entityB.Transform.Position);
-        float overlap = 1.0f - distance;
-
-        entityA.Transform.Position += direction * overlap * 0.5f;
-        entityB.Transform.Position -= direction * overlap * 0.5f;
-
-        if (entityA.HasGravity)
-        {
-            entityA.Physics.Velocity = Vector3.Zero;
-            entityA.Physics.IsColliding = true;
-        }
-        if (entityB.HasGravity)
-        {
-            entityB.Physics.Velocity = Vector3.Zero;
-            entityB.Physics.IsColliding = true;
-        }
-
-        float minSeparation = 0.01f;
-        if (Vector3.Distance(entityA.Transform.Position, entityB.Transform.Position) < minSeparation)
-        {
-            Vector3 correction = direction * (minSeparation - distance) * 0.5f;
-            entityA.Transform.Position += correction;
-            entityB.Transform.Position -= correction;
-        }
+        entityA.Transform.Position -= entityA.Physics.Velocity * deltaTime;
+        entityB.Transform.Position -= entityB.Physics.Velocity * deltaTime;
+        entityA.Physics.Velocity = Vector3.Zero; 
+        entityB.Physics.Velocity = Vector3.Zero;
     }
 
 
