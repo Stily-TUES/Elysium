@@ -75,8 +75,10 @@ public partial class ProjectEditorView : UserControl
         renderer = new Renderer();
         backgroundMesh = Mesh.CreateSquare(2.0f);
 
-        var entities = projectManager.GetActiveScene().GameEntities.ToList();
-        physicsManager = new PhysicsManager(entities);
+        var entities = projectManager.GetActiveScene().GameEntities;
+        entities.CollectionChanged += GameEntities_CollectionChanged;
+        physicsManager = new PhysicsManager(entities.ToList());
+
 
     }
 
@@ -94,6 +96,25 @@ public partial class ProjectEditorView : UserControl
         backgroundMesh.Dispose();
     }
 
+    private void GameEntities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+        {
+            foreach (GameEntity newEntity in e.NewItems)
+            {
+                physicsManager.AddEntity(newEntity);
+            }
+        }
+
+        if (e.OldItems != null)
+        {
+            foreach (GameEntity oldEntity in e.OldItems)
+            {
+                physicsManager.RemoveEntity(oldEntity);
+            }
+        }
+    }
+
     private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
     {
         Render();
@@ -108,10 +129,7 @@ public partial class ProjectEditorView : UserControl
     private void RenderTimer_Tick(object sender, EventArgs e)
     {
         float deltaTime = (float)renderTimer.Interval.TotalSeconds;
-        if (isPhysicsRunning)
-        {
-            physicsManager.OnTick(deltaTime);
-        }
+        physicsManager.OnTick(deltaTime);
         camera.Update(deltaTime);
         glControl.Invalidate();
     }
@@ -130,6 +148,7 @@ public partial class ProjectEditorView : UserControl
             if (selectedEntity != null)
             {
                 selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
+                physicsManager.UpdateInitialPosition(selectedEntity);
                 glControl.Invalidate();
             }
         }
@@ -235,13 +254,12 @@ public partial class ProjectEditorView : UserControl
     }
     private void RunPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
-        isPhysicsRunning = true;
+        physicsManager.StartSimulation();
     }
 
     private void StopPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
-        isPhysicsRunning = false;
-        physicsManager.Stop();
+        physicsManager.StopSimulation();
     }
 
     private void onTextureDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
