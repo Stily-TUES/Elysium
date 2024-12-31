@@ -59,6 +59,7 @@
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Mass" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Width="50"/>
                 <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Mass}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" />
+                <CheckBox Grid.Row="4" Grid.Column="2" IsChecked="{Binding HasGravity}" Content="Gravity" Foreground="White"/>
 
             </Grid>
 

@@ -18,7 +18,7 @@ public class Physics : Component
         _velocity = Vector3.Zero;
     }
 
-    public void ApplyPhysics(float deltaTime, float mass)
+    public void ApplyGravityPhysics(float deltaTime, float mass)
     {
         float gravity = CalculateGravity(mass);
         _velocity.Y += gravity * deltaTime;

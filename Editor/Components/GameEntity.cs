@@ -61,8 +61,8 @@ public class GameEntity : BaseViewModel
             }
         }
     }
-    [DataMember]
     private bool _isActive = true;
+    [DataMember]
     public bool IsActive
     {
         get => _isActive;
@@ -72,6 +72,21 @@ public class GameEntity : BaseViewModel
             {
                 _isActive = value;
                 OnPropertyChanged(nameof(IsActive));
+            }
+        }
+    }
+
+    private bool _hasGravity = false;
+    [DataMember]
+    public bool HasGravity
+    {
+        get => _hasGravity;
+        set
+        {
+            if (_hasGravity != value)
+            {
+                _hasGravity = value;
+                OnPropertyChanged(nameof(HasGravity));
             }
         }
     }
@@ -151,13 +166,13 @@ public class GameEntity : BaseViewModel
     {
         Renderer renderer = new Renderer();
 
-        //Mesh squareMesh = Mesh.CreateSquare(1.0f);
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
     }
     public void ApplyPhysics(float deltaTime)
     {
-        Physics.ApplyPhysics(deltaTime, Mass);
+        if (HasGravity)
+            Physics.ApplyGravityPhysics(deltaTime, Mass);
     }
 
     public void ResetPhysics()

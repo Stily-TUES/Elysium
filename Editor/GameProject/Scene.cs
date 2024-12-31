@@ -59,7 +59,7 @@ public class Scene : BaseViewModel
         if (GameEntities == null) return;
         foreach (var entity in GameEntities)
         {
-            entity.Render(camera, aspectRatio);
+            if (entity.IsActive == true) entity.Render(camera, aspectRatio);
         }
     }
     public Scene(Project project, string name)
