@@ -167,7 +167,7 @@ public class GameEntity : BaseViewModel
 
     public bool IsInside(Vector4 point)
     {
-        point = Transform.WorldToObjectSpace(point);
+        point = Transform.WorldToObjectSpacе(point);
         var point2 = point.Xy / point.W;
 
         if (point2.X < -0.5f || point2.X > 0.5f || point2.Y < -0.5f || point2.Y > 0.5f)
@@ -190,15 +190,24 @@ public class GameEntity : BaseViewModel
     }
     public bool CheckCollision(GameEntity other)
     {
-        Vector4 otherPositionInLocalSpace = Transform.WorldToObjectSpace(new Vector4(other.Transform.Position, 1.0f));
-        //Debug.WriteLine($"Entity A Position: {Transform.Position}, Entity B Position: {other.Transform.Position}");
-        //Debug.WriteLine($"Other Position in Local Space: {otherPositionInLocalSpace}");
+        if (!this.HasCollision || !other.HasCollision) 
+        {
+            return false;
+        }
+        Matrix4 thisRotationMatrix = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(this.Transform.RotationZ));
+        Matrix4 otherRotationMatrix = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(other.Transform.RotationZ));
 
-        Vector3 minA = new Vector3(-1f, -1f, 0);
-        Vector3 maxA = new Vector3(1f, 1f, 0);
+        Vector4 thisPosition = new Vector4(this.Transform.Position, 1.0f);
+        Vector4 otherPosition = new Vector4(other.Transform.Position, 1.0f);
 
-        return (otherPositionInLocalSpace.X >= minA.X && otherPositionInLocalSpace.X <= maxA.X) &&
-               (otherPositionInLocalSpace.Y >= minA.Y && otherPositionInLocalSpace.Y <= maxA.Y);
+        thisPosition = thisRotationMatrix * thisPosition;
+        otherPosition = otherRotationMatrix * otherPosition;
+
+        return thisPosition.X - this.Transform.ScaleX / 2.0f < otherPosition.X + other.Transform.ScaleX / 2.0f &&
+               thisPosition.X + this.Transform.ScaleX / 2.0f > otherPosition.X - other.Transform.ScaleX / 2.0f &&
+               thisPosition.Y - this.Transform.ScaleY / 2.0f < otherPosition.Y + other.Transform.ScaleY / 2.0f &&
+               thisPosition.Y + this.Transform.ScaleY / 2.0f > otherPosition.Y - other.Transform.ScaleY / 2.0f;
+
     }
 
     public void ResetPhysics()

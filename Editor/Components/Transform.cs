@@ -174,7 +174,7 @@ public class Transform : Component
         return Matrix4.CreateTranslation(-origin) * scaleMatrix * Matrix4.CreateTranslation(origin) * rotationMatrix * translationMatrix;
     }
 
-    public Vector4 WorldToObjectSpace(Vector4 vec)
+    public Vector4 WorldToObjectSpacе(Vector4 vec)
     {
         return vec * CreateModelMatrix().Inverted();
     }
