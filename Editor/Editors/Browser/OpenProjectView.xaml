@@ -16,7 +16,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Icon}" Width="50" Height="50" Margin="0, 0, 5, 0"/>
+                            <Image Source="{Binding Metadata.Icon}" Width="50" Height="50" Margin="0, 0, 5, 0"/>
                             <TextBlock Text="{Binding Metadata.Name}" />
                         </StackPanel>
                     </DataTemplate>
@@ -24,7 +24,7 @@
             </ListBox>
                 <Border Width="400" Height="350" Margin="5, 0, 0, 0">
                     <Border.Background>
-                        <ImageBrush ImageSource="{Binding Path=SelectedItem.Screenshot, ElementName=recentProjectsList}"/>
+                        <ImageBrush ImageSource="{Binding Path=SelectedItem.Metadata.Screenshot, ElementName=recentProjectsList}"/>
                     </Border.Background>
                 </Border>
                 

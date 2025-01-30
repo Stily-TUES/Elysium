@@ -16,7 +16,7 @@ using System.Windows.Input;
 namespace Editor.GameProject;
 
 [DataContract]
-public class Project : ProjectMetadata
+public class Project : RecentProjectElement
 {
     public static string Extension => ".elysium";
 

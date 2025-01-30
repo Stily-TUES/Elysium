@@ -14,26 +14,26 @@ using System.Threading.Tasks;
 namespace Editor.GameProject;
 
 [DataContract]
-public class RecentProjectElement
+public class ProjectMetadata
 {
     [DataMember]
     public string FullPath { get; set; }
     [DataMember]
     public DateTime Date { get; set; }
-    public byte[] Icon { get; set; }
-    public byte[] Screenshot { get; set; }
-    public ProjectMetadata Metadata { get; set; }
+    public RecentProjectElement Metadata { get; set; }
 
     public void Load()
     {
         if (File.Exists(FullPath))
         {
             var project = Serializer.FromFile<Project>(FullPath);
-            Metadata = new ProjectMetadata
+            Metadata = new RecentProjectElement
             {
                 IconPath = project.IconPath,
                 ScreenshotPath = project.ScreenshotPath,
-                Name = project.Name
+                Name = project.Name,
+                Icon = project.Icon,
+                Screenshot = project.Screenshot
             };
         }
     }
@@ -42,7 +42,7 @@ public class RecentProjectElement
 public class ProjectDataList
 {
     [DataMember]
-    public List<RecentProjectElement> Projects { get; set; }
+    public List<ProjectMetadata> Projects { get; set; }
     public ProjectDataList Load()
     {
         Projects.ForEach(x => x.Load());
@@ -51,7 +51,7 @@ public class ProjectDataList
 }
 
 [DataContract]
-public class ProjectMetadata : BaseViewModel
+public class RecentProjectElement : BaseViewModel
 {
     [DataMember]
     public string Name { get; set; }
@@ -59,13 +59,15 @@ public class ProjectMetadata : BaseViewModel
     public string IconPath { get; set; }
     [DataMember]
     public string ScreenshotPath { get; set; }
+    public byte[] Icon { get; set; }
+    public byte[] Screenshot { get; set; }
 }
 public class OpenProject
 {
     private static readonly string _appDataPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\ElysiumEditor\";
     private static readonly string _projectDataPath;
-    private static readonly ObservableCollection<RecentProjectElement> _projects = new ObservableCollection<RecentProjectElement>();
-    public static ReadOnlyObservableCollection<RecentProjectElement> Projects { get; }
+    private static readonly ObservableCollection<ProjectMetadata> _projects = new ObservableCollection<ProjectMetadata>();
+    public static ReadOnlyObservableCollection<ProjectMetadata> Projects { get; }
 
    
     static OpenProject()
@@ -74,7 +76,7 @@ public class OpenProject
         {
             if (!Directory.Exists(_appDataPath)) Directory.CreateDirectory(_appDataPath);
             _projectDataPath = $@"{_appDataPath}ProjectData.xml";
-            Projects = new ReadOnlyObservableCollection<RecentProjectElement>(_projects);
+            Projects = new ReadOnlyObservableCollection<ProjectMetadata>(_projects);
             ReadProjectData();
         }
         catch (Exception e)
@@ -97,11 +99,11 @@ public class OpenProject
                     {
                         if (!string.IsNullOrEmpty(project.Metadata.IconPath) && File.Exists(project.Metadata.IconPath))
                         {
-                            project.Icon = File.ReadAllBytes(project.Metadata.IconPath);
+                            project.Metadata.Icon = File.ReadAllBytes(project.Metadata.IconPath);
                         }
                         if (!string.IsNullOrEmpty(project.Metadata.ScreenshotPath) && File.Exists(project.Metadata.ScreenshotPath))
                         {
-                            project.Screenshot = File.ReadAllBytes(project.Metadata.ScreenshotPath);
+                            project.Metadata.Screenshot = File.ReadAllBytes(project.Metadata.ScreenshotPath);
                         }
                     }
                     _projects.Add(project);
@@ -116,7 +118,7 @@ public class OpenProject
         Serializer.ToFile(new ProjectDataList() { Projects = projects}, _projectDataPath);
     }
 
-    public static ProjectManager Open(RecentProjectElement project)
+    public static ProjectManager Open(ProjectMetadata project)
     {
         ReadProjectData();
         var existingProject = _projects.FirstOrDefault(p => p.FullPath == project.FullPath);

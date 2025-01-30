@@ -35,7 +35,7 @@ public partial class NewProjectView : UserControl
         if(!string.IsNullOrEmpty(projectPath))
         {
             dialogResult = true;
-            var project = OpenProject.Open(new RecentProjectElement() { Date = new DateTime(), FullPath = projectPath });
+            var project = OpenProject.Open(new ProjectMetadata() { Date = new DateTime(), FullPath = projectPath });
             window.DataContext = project;
         }
         window.DialogResult = dialogResult;

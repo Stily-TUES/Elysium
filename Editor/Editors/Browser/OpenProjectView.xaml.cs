@@ -30,7 +30,7 @@ public partial class OpenProjectView : UserControl
     }
     private void OpenRecentProject()
     {
-        var project = OpenProject.Open(recentProjectsList.SelectedItem as RecentProjectElement);
+        var project = OpenProject.Open(recentProjectsList.SelectedItem as ProjectMetadata);
         bool dialogResult = false;
         var window = Window.GetWindow(this);
         if (project != null)
