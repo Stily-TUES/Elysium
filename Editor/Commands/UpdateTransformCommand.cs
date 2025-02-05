@@ -2,6 +2,8 @@
 using Editor.GameProject;
 using Editor.Utils;
 using System;
+using System.Globalization;
+using System.Windows.Input;
 
 namespace Editor.Commands;
 
@@ -31,3 +33,4 @@ public class UpdateTransformCommand : UndoRedo
         _transform.GetType().GetProperty(_propertyName).SetValue(_transform, _oldValue);
     }
 }
+

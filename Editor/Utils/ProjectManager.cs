@@ -70,6 +70,7 @@ public class ProjectManager
             if (scene.isLoaded)
             {
                 scene.Render(camera, aspectRatio);
+                break;
             }
         }
     }

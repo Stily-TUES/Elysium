@@ -207,7 +207,6 @@ public class GameEntity : BaseViewModel
                thisPosition.X + this.Transform.ScaleX / 2.0f > otherPosition.X - other.Transform.ScaleX / 2.0f &&
                thisPosition.Y - this.Transform.ScaleY / 2.0f < otherPosition.Y + other.Transform.ScaleY / 2.0f &&
                thisPosition.Y + this.Transform.ScaleY / 2.0f > otherPosition.Y - other.Transform.ScaleY / 2.0f;
-
     }
 
     public void ResetPhysics()

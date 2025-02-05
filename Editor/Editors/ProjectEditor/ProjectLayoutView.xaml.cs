@@ -137,5 +137,4 @@ public partial class ProjectLayoutView : UserControl
             }
         }
     }
-
 }

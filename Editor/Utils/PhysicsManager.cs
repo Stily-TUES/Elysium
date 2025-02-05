@@ -65,10 +65,10 @@ public class PhysicsManager
 
     private void ResolveCollision(GameEntity entityA, GameEntity entityB, float deltaTime)
     {
-        entityA.Transform.Position -= entityA.Physics.Velocity * deltaTime;
-        entityB.Transform.Position -= entityB.Physics.Velocity * deltaTime;
-        entityA.Physics.Velocity = Vector3.Zero; 
-        entityB.Physics.Velocity = Vector3.Zero;
+        entityA.Transform.Position -= entityA.Physics.velocity * deltaTime;
+        entityB.Transform.Position -= entityB.Physics.velocity * deltaTime;
+        entityA.Physics.velocity = Vector3.Zero; 
+        entityB.Physics.velocity = Vector3.Zero;
     }
 
 

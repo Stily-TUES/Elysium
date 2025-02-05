@@ -53,7 +53,6 @@ public partial class ProjectComponentView : UserControl
     {
         if (e.Key == Key.Enter)
         {
-
             var textBox = sender as TextBox;
             if (textBox != null)
             {

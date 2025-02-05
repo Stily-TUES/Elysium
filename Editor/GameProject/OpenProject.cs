@@ -20,14 +20,14 @@ public class ProjectMetadata
     public string FullPath { get; set; }
     [DataMember]
     public DateTime Date { get; set; }
-    public RecentProjectElement Metadata { get; set; }
+    public RecentProjectElement RecentProject { get; set; }
 
     public void Load()
     {
         if (File.Exists(FullPath))
         {
             var project = Serializer.FromFile<Project>(FullPath);
-            Metadata = new RecentProjectElement
+            RecentProject = new RecentProjectElement
             {
                 IconPath = project.IconPath,
                 ScreenshotPath = project.ScreenshotPath,
@@ -69,7 +69,6 @@ public class OpenProject
     private static readonly ObservableCollection<ProjectMetadata> _projects = new ObservableCollection<ProjectMetadata>();
     public static ReadOnlyObservableCollection<ProjectMetadata> Projects { get; }
 
-   
     static OpenProject()
     {
         try
@@ -95,15 +94,15 @@ public class OpenProject
             {
                 if (File.Exists(project.FullPath))
                 {
-                    if (project.Metadata != null)
+                    if (project.RecentProject != null)
                     {
-                        if (!string.IsNullOrEmpty(project.Metadata.IconPath) && File.Exists(project.Metadata.IconPath))
+                        if (!string.IsNullOrEmpty(project.RecentProject.IconPath) && File.Exists(project.RecentProject.IconPath))
                         {
-                            project.Metadata.Icon = File.ReadAllBytes(project.Metadata.IconPath);
+                            project.RecentProject.Icon = File.ReadAllBytes(project.RecentProject.IconPath);
                         }
-                        if (!string.IsNullOrEmpty(project.Metadata.ScreenshotPath) && File.Exists(project.Metadata.ScreenshotPath))
+                        if (!string.IsNullOrEmpty(project.RecentProject.ScreenshotPath) && File.Exists(project.RecentProject.ScreenshotPath))
                         {
-                            project.Metadata.Screenshot = File.ReadAllBytes(project.Metadata.ScreenshotPath);
+                            project.RecentProject.Screenshot = File.ReadAllBytes(project.RecentProject.ScreenshotPath);
                         }
                     }
                     _projects.Add(project);

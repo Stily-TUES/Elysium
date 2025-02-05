@@ -16,15 +16,15 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Metadata.Icon}" Width="50" Height="50" Margin="0, 0, 5, 0"/>
-                            <TextBlock Text="{Binding Metadata.Name}" />
+                            <Image Source="{Binding RecentProject.Icon}" Width="50" Height="50" Margin="0, 0, 5, 0"/>
+                            <TextBlock Text="{Binding RecentProject.Name}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
                 <Border Width="400" Height="350" Margin="5, 0, 0, 0">
                     <Border.Background>
-                        <ImageBrush ImageSource="{Binding Path=SelectedItem.Metadata.Screenshot, ElementName=recentProjectsList}"/>
+                        <ImageBrush ImageSource="{Binding Path=SelectedItem.RecentProject.Screenshot, ElementName=recentProjectsList}"/>
                     </Border.Background>
                 </Border>
                 

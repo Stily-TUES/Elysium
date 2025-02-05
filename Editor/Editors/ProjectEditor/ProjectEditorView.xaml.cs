@@ -43,6 +43,8 @@ public partial class ProjectEditorView : UserControl
     private Mesh backgroundMesh;
     private PhysicsManager physicsManager;
     private bool isPhysicsRunning;
+    private float backgroundMeshSize = 2.0f;
+    private int fpsMilliseconds = 16;
 
     public ProjectEditorView()
     {
@@ -67,19 +69,17 @@ public partial class ProjectEditorView : UserControl
         projectManager = (ProjectManager)window.DataContext;
 
         renderTimer = new DispatcherTimer();
-        renderTimer.Interval = TimeSpan.FromMilliseconds(16); //60 FPS
+        renderTimer.Interval = TimeSpan.FromMilliseconds(fpsMilliseconds); //60 FPS
         renderTimer.Tick += RenderTimer_Tick;
         renderTimer.Start();
 
         camera = new Camera();
         renderer = new Renderer();
-        backgroundMesh = Mesh.CreateSquare(2.0f);
+        backgroundMesh = Mesh.CreateSquare(backgroundMeshSize);
 
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
         physicsManager = new PhysicsManager(entities.ToList());
-
-
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)

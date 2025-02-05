@@ -31,7 +31,6 @@ public class Project : RecentProjectElement
 
     public void Save(string path)
     {
-        
         Serializer.ToFile<Project>(this, path);
     }
 

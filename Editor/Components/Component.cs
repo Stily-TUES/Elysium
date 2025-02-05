@@ -13,10 +13,10 @@ namespace Editor.Components;
 public class Component : BaseViewModel
 {
     [DataMember]
-    public GameEntity ParentComponent { get; private set; }
+    public GameEntity ParentEntity { get; private set; }
     public Component(GameEntity owner)
     {
         Debug.Assert(owner != null);
-        ParentComponent = owner;
+        ParentEntity = owner;
     }
 }
