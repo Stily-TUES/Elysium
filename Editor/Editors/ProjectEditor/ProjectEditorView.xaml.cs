@@ -80,6 +80,7 @@ public partial class ProjectEditorView : UserControl
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
         physicsManager = new PhysicsManager(entities.ToList());
+        fpsComboBox.SelectedIndex = 1;
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -111,6 +112,17 @@ public partial class ProjectEditorView : UserControl
             foreach (GameEntity oldEntity in e.OldItems)
             {
                 physicsManager.RemoveEntity(oldEntity);
+            }
+        }
+    }
+
+    private void fpsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (fpsComboBox.SelectedItem is ComboBoxItem selectedItem)
+        {
+            if (int.TryParse(selectedItem.Tag.ToString(), out int fpsMilliseconds))
+            {
+                renderTimer.Interval = TimeSpan.FromMilliseconds(fpsMilliseconds);
             }
         }
     }

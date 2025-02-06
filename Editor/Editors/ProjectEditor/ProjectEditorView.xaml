@@ -29,8 +29,21 @@
             <Button Content="Undo" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onUndoButton_Click"/>
             <Button Content="Redo" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onRedoButton_Click"/>
             <Button Content="Save" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="onSaveButton_Click"/>
-            <Button Content="Run" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="RunPhysicsButton_Click" />
-            <Button Content="Stop" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="StopPhysicsButton_Click" />
+            <Button Content="Run" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="RunPhysicsButton_Click"/>
+            <Button Content="Stop" Width="50" Margin="5" Background="#2a2f38" Foreground="White" Click="StopPhysicsButton_Click"/>
+            <ComboBox x:Name="fpsComboBox" SelectionChanged="fpsComboBox_SelectionChanged"
+          Width="75" Margin="5" Background="#2a2f38" Foreground="#2a2f38"
+          BorderBrush="#1a1f27">
+                <ComboBox.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#2a2f38"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3a3f48"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#2a2f38"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
+                </ComboBox.Resources>
+                <ComboBoxItem Content="30 FPS" Tag="33" Background="#2a2f38" Foreground="White"/>
+                <ComboBoxItem Content="60 FPS" Tag="16" Background="#2a2f38" Foreground="White"/>
+                <ComboBoxItem Content="120 FPS" Tag="8" Background="#2a2f38" Foreground="White"/>
+            </ComboBox>
         </StackPanel>
 
         <Border Grid.Row="1" Grid.Column="0" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1" MinWidth="20">

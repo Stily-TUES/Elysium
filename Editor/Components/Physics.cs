@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -12,7 +13,8 @@ namespace Editor.Components;
 public class Physics : Component
 {
     public Vector3 velocity;
-    private float gravity = -9.81f;
+    [DataMember]
+    private readonly float _gravity = -9.81f;
     public bool IsColliding { get; set; }
 
     public Physics(GameEntity owner) : base(owner)
@@ -37,6 +39,6 @@ public class Physics : Component
 
     private float CalculateGravity(float mass)
     {
-        return gravity * mass;
+        return _gravity * mass;
     }
 }

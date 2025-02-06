@@ -14,6 +14,7 @@ public class PhysicsManager
     private readonly List<GameEntity> _entities;
     private readonly Dictionary<GameEntity, Vector3> _initialPositions;
     private bool _isSimulationRunning;
+    private float gridSize;
 
     public PhysicsManager(List<GameEntity> entities)
     {
@@ -23,43 +24,39 @@ public class PhysicsManager
 
     public void OnTick(float deltaTime)
     {
-        //Debug.WriteLine("PhysicsManager.OnTick");
         if (_isSimulationRunning)
         {
+            var grid = new Dictionary<(int, int), List<GameEntity>>();
+            foreach (var entity in _entities)
+            {
+                var gridPos = (x: (int)(entity.Transform.Position.X / gridSize), y: (int)(entity.Transform.Position.Y / gridSize));
+                if (!grid.ContainsKey(gridPos))
+                {
+                    grid[gridPos] = new List<GameEntity>();
+                }
+                grid[gridPos].Add(entity);
+            }
+
             foreach (var entity in _entities)
             {
                 entity.ApplyPhysics(deltaTime);
-                CheckCollisions(entity, deltaTime);
+                CheckCollisions(entity, deltaTime, grid);
             }
         }
-        
-        
-
-        //// Reset collision state
-        //foreach (var entity in _entities)
-        //{
-        //    entity.Physics.IsColliding = false;
-        //}
     }
-    private void CheckCollisions(GameEntity entityA, float deltaTime)
+    private void CheckCollisions(GameEntity entityA, float deltaTime, Dictionary<(int, int), List<GameEntity>> grid)
     {
-
-        for (int j = 0; j < _entities.Count; j++)
+        var entityAGridPos = (x: (int)(entityA.Transform.Position.X / gridSize), y: (int)(entityA.Transform.Position.Y / gridSize));
+        if (grid.ContainsKey(entityAGridPos))
         {
-            var entityB = _entities[j];
-            if (entityA == entityB)
+            foreach (var entityB in grid[entityAGridPos])
             {
-                continue;
-            }
-
-            //if (entityA.IsActive && entityB.IsActive && entityA.HasCollision && entityB.HasCollision)
-            //{
-                if (entityA.CheckCollision(entityB))
+                if (entityA != entityB && entityA.CheckCollision(entityB))
                 {
                     ResolveCollision(entityA, entityB, deltaTime);
                     break;
                 }
-            //}
+            }
         }
     }
 
@@ -70,7 +67,6 @@ public class PhysicsManager
         entityA.Physics.velocity = Vector3.Zero; 
         entityB.Physics.velocity = Vector3.Zero;
     }
-
 
     public void Stop()
     {
@@ -86,6 +82,7 @@ public class PhysicsManager
     }
     public void StartSimulation()
     {
+        gridSize = CalculateMaxEntitySize() * 1.5f;
         _isSimulationRunning = true;
     }
 
@@ -113,5 +110,20 @@ public class PhysicsManager
         {
             _initialPositions[entity] = entity.Transform.Position;
         }
+    }
+    private float CalculateMaxEntitySize()
+    {
+        float maxSize = 0;
+        foreach (var entity in _entities)
+        {
+            float sizeX = entity.Transform.ScaleX;
+            float sizeY = entity.Transform.ScaleY;
+            float size = Math.Max(sizeX, sizeY);
+            if (size > maxSize)
+            {
+                maxSize = size;
+            }
+        }
+        return maxSize;
     }
 }
