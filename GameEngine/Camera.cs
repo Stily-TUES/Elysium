@@ -41,7 +41,7 @@ public class Camera
         Zoom *= (float)Math.Pow(2, -amount);
     }
 
-    public void Update(float deltaTime)
+    public void Update()
     {
         Position = targetPosition;
     }

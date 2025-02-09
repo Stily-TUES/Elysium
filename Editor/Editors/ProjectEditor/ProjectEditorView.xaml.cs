@@ -142,7 +142,7 @@ public partial class ProjectEditorView : UserControl
     {
         float deltaTime = (float)renderTimer.Interval.TotalSeconds;
         physicsManager.OnTick(deltaTime);
-        camera.Update(deltaTime);
+        camera.Update();
         glControl.Invalidate();
     }
 
