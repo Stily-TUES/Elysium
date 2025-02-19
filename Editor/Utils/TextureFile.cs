@@ -36,5 +36,19 @@ public class TextureFile
         {
             TextureFiles = new List<TextureFile>();
         }
+
+    }
+    public static void LoadTexturesFromDirectory(string directoryPath)
+    {
+        if (Directory.Exists(directoryPath))
+        {
+            TextureFiles.AddRange(Directory.GetFiles(directoryPath)
+                .Select(filePath => new TextureFile
+                {
+                    FileName = Path.GetFileName(filePath),
+                    ImagePath = filePath,
+                    Image = File.ReadAllBytes(filePath),
+                }));
+        }
     }
 }

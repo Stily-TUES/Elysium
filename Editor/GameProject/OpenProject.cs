@@ -20,6 +20,7 @@ public class ProjectMetadata
     public string FullPath { get; set; }
     [DataMember]
     public DateTime Date { get; set; }
+    public TextureFile TextureFile { get; set; }
     public RecentProjectElement RecentProject { get; set; }
 
     public void Load()
@@ -129,6 +130,9 @@ public class OpenProject
         project.Date = DateTime.Now;
 
         WriteProjectData();
+        string projectTexturesFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Textures"));
+        TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
+
 
         return ProjectManager.Load(project.FullPath);
     }

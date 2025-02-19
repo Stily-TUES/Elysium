@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
+using System.IO;
 
 namespace Editor.Components;
 
