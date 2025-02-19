@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.GLControl" Version="4.0.1" />
+    <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
+    <PackageReference Include="Python.Runtime" Version="2.7.9" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,10 +21,6 @@
     <Reference Include="WindowsFormsIntegration">
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsFormsIntegration.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Scripting\" />
   </ItemGroup>
 
 </Project>

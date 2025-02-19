@@ -130,9 +130,13 @@ public class OpenProject
         project.Date = DateTime.Now;
 
         WriteProjectData();
-        string projectTexturesFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Textures"));
-        TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
-
+        //TODO: fix when creating new project RecentProject.Name get returns null
+        if (project.RecentProject.Name != null)
+        {
+            string projectTexturesFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Textures"));
+            TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
+        }
+        
 
         return ProjectManager.Load(project.FullPath);
     }
