@@ -20,6 +20,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using Editor.Scripting;
 
 namespace Editor.Components;
 
@@ -121,7 +122,7 @@ public class GameEntity : BaseViewModel
     }
 
     [DataMember]
-    public float Mass 
+    public float Mass
     {
         get => _mass;
         set
@@ -138,18 +139,15 @@ public class GameEntity : BaseViewModel
     //adding id so when we rename the entity we can still find it
     public int EntityId { get; private set; }
 
-
-    //[DataMember]
-    //public ObservableCollection<Component> Components { get; } = new ObservableCollection<Component>();
     [DataMember]
     public Transform Transform { get; set; }
 
     [DataMember]
-
     public Physics Physics;
 
     [DataMember]
-    public TextureFile Texture {
+    public TextureFile Texture
+    {
         get => _texture;
         set
         {
@@ -158,8 +156,12 @@ public class GameEntity : BaseViewModel
         }
     }
 
+    [DataMember]
+    public ObservableCollection<ScriptFile> Scripts { get; private set; } = new ObservableCollection<ScriptFile>();
+
     [IgnoreDataMember]
     public Scene ParentScene { get; private set; }
+
     public void Rename(string newName)
     {
         Name = newName;
@@ -177,6 +179,7 @@ public class GameEntity : BaseViewModel
         }
         return true;
     }
+
     public void Render(Camera camera, float aspectRatio)
     {
         Renderer renderer = new Renderer();
@@ -184,14 +187,16 @@ public class GameEntity : BaseViewModel
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));
     }
+
     public void ApplyPhysics(float deltaTime)
     {
         if (HasGravity)
             Physics.ApplyGravityPhysics(deltaTime, Mass);
     }
+
     public bool CheckCollision(GameEntity other)
     {
-        if (!this.HasCollision || !other.HasCollision) 
+        if (!this.HasCollision || !other.HasCollision)
         {
             return false;
         }
@@ -214,6 +219,7 @@ public class GameEntity : BaseViewModel
     {
         Physics.Reset();
     }
+
     public GameEntity(Scene parentScene)
     {
         Debug.Assert(parentScene != null);
@@ -221,7 +227,5 @@ public class GameEntity : BaseViewModel
         EntityId = _nextId++;
         Physics = new Physics(this);
         Transform = new Transform(this);
-        //Components.Add(new Transform(this));
     }
-
 }

@@ -1,6 +1,7 @@
 ﻿using Editor.Commands;
 using Editor.Components;
 using Editor.GameProject;
+using Editor.Scripting;
 using Editor.Utils;
 using System;
 using System.Collections.Generic;
@@ -27,11 +28,13 @@ public partial class ProjectComponentView : UserControl
 {
     public static ProjectComponentView Instance { get; private set; }
     public ProjectManager ProjectManager { get; set; }
+    public ScriptManager ScriptManager { get; set; }
     public ProjectComponentView()
     {
         InitializeComponent();
         DataContext = null;
         Instance = this;
+        ScriptManager = new ScriptManager();
     }
     private void RenameTextBox_KeyDown(object sender, KeyEventArgs e)
     {
@@ -86,6 +89,31 @@ public partial class ProjectComponentView : UserControl
             {
                 gameEntity.Texture = textureFile;
             }
+        }
+    }
+    private void OnScriptDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(ScriptFile)))
+        {
+            var scriptFile = (ScriptFile)e.Data.GetData(typeof(ScriptFile));
+
+            var gameEntity = (GameEntity)this.DataContext;
+            if (gameEntity != null)
+            {
+                ScriptManager.AddScript(gameEntity, scriptFile.FilePath);
+            }
+        }
+    }
+
+    private void OnRemoveScriptButton_Click(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var scriptFile = button?.DataContext as ScriptFile;
+
+        var gameEntity = (GameEntity)this.DataContext;
+        if (gameEntity != null && scriptFile != null)
+        {
+            ScriptManager.RemoveScript(gameEntity, scriptFile.FilePath);
         }
     }
 }

@@ -63,7 +63,20 @@
                 <CheckBox Grid.Row="4" Grid.Column="3" IsChecked="{Binding HasCollision}" Content="Collision" Foreground="White"/>
 
             </Grid>
-
+            <Border BorderBrush="White" BorderThickness="1" AllowDrop="True" Drop="OnScriptDrop" >
+                <TextBlock Text="Drag and drop script here" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" IsEnabled="{Binding IsActive}"/>
+            </Border>
+            <TextBlock Text="Scripts" Foreground="White" FontSize="16" Margin="10"/>
+            <ListBox Name="ScriptsListBox" ItemsSource="{Binding Scripts}" Margin="10" Background="#2a2f38" Foreground="White">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding FileName}" Foreground="White" VerticalAlignment="Center"/>
+                            <Button Content="Remove" Margin="5,0,0,0" Click="OnRemoveScriptButton_Click"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </Border>
 </UserControl>

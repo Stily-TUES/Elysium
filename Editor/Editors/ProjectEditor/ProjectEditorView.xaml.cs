@@ -38,7 +38,7 @@ public partial class ProjectEditorView : UserControl
     private Point lastMousePosition;
     private float aspectRatio;
     private GameEntity? selectedEntity;
-    private bool isDragging; 
+    private bool isDragging;
     private Vector2 dragDelta;
     private int backgroundTextureId;
     private Mesh backgroundMesh;
@@ -54,6 +54,7 @@ public partial class ProjectEditorView : UserControl
         Loaded += ProjectEditorView_Loaded;
         Unloaded += ProjectEditorView_Unloaded;
         LoadTextures();
+        LoadScripts();
     }
 
     private void ProjectEditorView_Loaded(object sender, RoutedEventArgs e)
@@ -79,6 +80,7 @@ public partial class ProjectEditorView : UserControl
         renderer = new Renderer();
         backgroundMesh = Mesh.CreateSquare(backgroundMeshSize);
 
+        scriptManager = new ScriptManager();
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
         physicsManager = new PhysicsManager(entities.ToList(), scriptManager);
@@ -95,7 +97,6 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseWheel -= GlControl_MouseWheel;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
-
 
         backgroundMesh.Dispose();
     }
@@ -222,7 +223,6 @@ public partial class ProjectEditorView : UserControl
         if (e.Button == System.Windows.Forms.MouseButtons.Left)
         {
             isDragging = false;
-
         }
     }
 
@@ -253,6 +253,18 @@ public partial class ProjectEditorView : UserControl
         }
     }
 
+    private void LoadScripts()
+    {
+        if (ScriptFile.ScriptFiles.Any())
+        {
+            ScriptsListBox.ItemsSource = ScriptFile.ScriptFiles;
+        }
+        else
+        {
+            MessageBox.Show("Scripts folder not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private void onUndoButton_Click(object sender, RoutedEventArgs e)
     {
         projectManager?.Undo();
@@ -267,6 +279,7 @@ public partial class ProjectEditorView : UserControl
     {
         projectManager?.Save();
     }
+
     private void RunPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
         physicsManager.StartSimulation();
@@ -285,6 +298,17 @@ public partial class ProjectEditorView : UserControl
         if (textureFile != null)
         {
             DragDrop.DoDragDrop(stackPanel, textureFile, DragDropEffects.Copy);
+        }
+    }
+
+    private void onScriptDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var stackPanel = sender as StackPanel;
+        var scriptFile = stackPanel.DataContext as ScriptFile;
+
+        if (scriptFile != null)
+        {
+            DragDrop.DoDragDrop(stackPanel, scriptFile, DragDropEffects.Copy);
         }
     }
 }

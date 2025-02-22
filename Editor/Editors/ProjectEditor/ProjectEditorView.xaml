@@ -89,7 +89,21 @@
         <Border Grid.Row="3" Grid.ColumnSpan="5" Background="#2a2f38" BorderBrush="#1a1f27" BorderThickness="1">
             <TabControl Background="#2a2f38" Foreground="White">
                 <TabItem Header="Scripts">
-          
+                    <ListBox Background="#2a2f38" Foreground="White" x:Name="ScriptsListBox">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5" MouseLeftButtonDown="onScriptDrag_MouseLeftButtonDown">
+                                    <Image Source="pack://application:,,,/Resources/document_icon.png" Width="50" Height="50" Margin="5"/>
+                                    <TextBlock Text="{Binding FileName}" Foreground="White" TextAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </TabItem>
                 <TabItem Header="Textures">
                     <ListBox Background="#2a2f38" Foreground="White" x:Name="TexturesListBox">

@@ -1,4 +1,5 @@
 ﻿using Editor.Common;
+using Editor.Scripting;
 using Editor.Utils;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class ProjectMetadata
     public string FullPath { get; set; }
     [DataMember]
     public DateTime Date { get; set; }
-    public TextureFile TextureFile { get; set; }
+    //public TextureFile TextureFile { get; set; }
     public RecentProjectElement RecentProject { get; set; }
 
     public void Load()
@@ -136,7 +137,13 @@ public class OpenProject
             string projectTexturesFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Textures"));
             TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
         }
-        
+
+        if (project.RecentProject.Name != null)
+        {
+            string projectScriptsFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Scripts"));
+            ScriptFile.LoadScriptsFromDirectory(projectScriptsFolderPath);
+        }
+
 
         return ProjectManager.Load(project.FullPath);
     }
