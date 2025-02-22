@@ -1,4 +1,5 @@
 ﻿using Editor.Components;
+using Editor.Scripting;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ public class PhysicsManager
     private readonly Dictionary<GameEntity, Vector3> _initialPositions;
     private bool _isSimulationRunning;
     private float gridSize;
+    private readonly ScriptManager _scriptManager;
 
-    public PhysicsManager(List<GameEntity> entities)
+    public PhysicsManager(List<GameEntity> entities, ScriptManager scriptManager)
     {
         _entities = entities;
         _initialPositions = entities.ToDictionary(e => e, e => e.Transform.Position);
+        _scriptManager = scriptManager;
     }
 
     public void OnTick(float deltaTime)
@@ -41,9 +44,11 @@ public class PhysicsManager
             {
                 entity.ApplyPhysics(deltaTime);
                 CheckCollisions(entity, deltaTime, grid);
+                _scriptManager.UpdateScript(entity, deltaTime);
             }
         }
     }
+
     private void CheckCollisions(GameEntity entityA, float deltaTime, Dictionary<(int, int), List<GameEntity>> grid)
     {
         var entityAGridPos = (x: (int)(entityA.Transform.Position.X / gridSize), y: (int)(entityA.Transform.Position.Y / gridSize));
@@ -64,7 +69,7 @@ public class PhysicsManager
     {
         entityA.Transform.Position -= entityA.Physics.velocity * deltaTime;
         entityB.Transform.Position -= entityB.Physics.velocity * deltaTime;
-        entityA.Physics.velocity = Vector3.Zero; 
+        entityA.Physics.velocity = Vector3.Zero;
         entityB.Physics.velocity = Vector3.Zero;
     }
 
@@ -77,9 +82,9 @@ public class PhysicsManager
                 entity.ResetPhysics();
                 entity.Transform.Position = _initialPositions[entity];
             }
-
         }
     }
+
     public void StartSimulation()
     {
         gridSize = CalculateMaxEntitySize() * 1.5f;
@@ -111,6 +116,7 @@ public class PhysicsManager
             _initialPositions[entity] = entity.Transform.Position;
         }
     }
+
     private float CalculateMaxEntitySize()
     {
         float maxSize = 0;

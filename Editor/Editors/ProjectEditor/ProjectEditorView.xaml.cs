@@ -21,6 +21,7 @@ using Vector2 = OpenTK.Mathematics.Vector2;
 using Editor.Components;
 using System.Diagnostics;
 using static OpenTK.Graphics.OpenGL.GL;
+using Editor.Scripting;
 
 namespace Editor.Editors;
 
@@ -42,6 +43,7 @@ public partial class ProjectEditorView : UserControl
     private int backgroundTextureId;
     private Mesh backgroundMesh;
     private PhysicsManager physicsManager;
+    private ScriptManager scriptManager;
     private bool isPhysicsRunning;
     private float backgroundMeshSize = 2.0f;
     private int fpsMilliseconds = 16;
@@ -79,7 +81,7 @@ public partial class ProjectEditorView : UserControl
 
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
-        physicsManager = new PhysicsManager(entities.ToList());
+        physicsManager = new PhysicsManager(entities.ToList(), scriptManager);
         fpsComboBox.SelectedIndex = 1;
     }
 
@@ -93,6 +95,7 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseWheel -= GlControl_MouseWheel;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
+
 
         backgroundMesh.Dispose();
     }
