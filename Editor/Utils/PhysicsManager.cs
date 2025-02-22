@@ -18,11 +18,11 @@ public class PhysicsManager
     private float gridSize;
     private readonly ScriptManager _scriptManager;
 
-    public PhysicsManager(List<GameEntity> entities, ScriptManager scriptManager)
+    public PhysicsManager(List<GameEntity> entities)
     {
         _entities = entities;
         _initialPositions = entities.ToDictionary(e => e, e => e.Transform.Position);
-        _scriptManager = scriptManager;
+        _scriptManager = ScriptManager.Instance;
     }
 
     public void OnTick(float deltaTime)

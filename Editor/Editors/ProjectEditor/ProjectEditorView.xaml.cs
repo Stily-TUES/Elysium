@@ -83,7 +83,7 @@ public partial class ProjectEditorView : UserControl
         scriptManager = new ScriptManager();
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
-        physicsManager = new PhysicsManager(entities.ToList(), scriptManager);
+        physicsManager = new PhysicsManager(entities.ToList());
         fpsComboBox.SelectedIndex = 1;
     }
 

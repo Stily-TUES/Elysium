@@ -9,8 +9,11 @@ namespace Editor.Scripting;
 [DataContract]
 public class ScriptManager
 {
+    private static ScriptManager _instance;
+    public static ScriptManager Instance => _instance ??= new ScriptManager();
+
     [DataMember]
-    private readonly Dictionary<GameEntity, List<Lua>> _scripts = new Dictionary<GameEntity, List<Lua>>();
+    private Dictionary<GameEntity, List<Lua>> _scripts = new Dictionary<GameEntity, List<Lua>>();
 
     public void AddScript(GameEntity entity, string scriptPath)
     {
@@ -21,6 +24,7 @@ public class ScriptManager
 
         var lua = new Lua();
         lua["ScriptPath"] = scriptPath;
+
         lua.DoFile(scriptPath);
         _scripts[entity].Add(lua);
 

@@ -28,13 +28,13 @@ public partial class ProjectComponentView : UserControl
 {
     public static ProjectComponentView Instance { get; private set; }
     public ProjectManager ProjectManager { get; set; }
-    public ScriptManager ScriptManager { get; set; }
+    public ScriptManager ScriptManager => ScriptManager.Instance;
+
     public ProjectComponentView()
     {
         InitializeComponent();
         DataContext = null;
         Instance = this;
-        ScriptManager = new ScriptManager();
     }
     private void RenameTextBox_KeyDown(object sender, KeyEventArgs e)
     {
