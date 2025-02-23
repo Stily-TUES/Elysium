@@ -42,9 +42,9 @@ public class PhysicsManager
 
         foreach (var entity in _entities)
         {
+            _scriptManager.UpdateScript(entity, deltaTime);
             entity.ApplyPhysics(deltaTime);
             CheckCollisions(entity, deltaTime, grid);
-            _scriptManager.UpdateScript(entity, deltaTime);
         }
     }
 
@@ -76,7 +76,7 @@ public class PhysicsManager
     {
         foreach (var entity in _entities)
         {
-            if (entity.HasGravity)
+            if (entity.HasGravity || entity.Scripts.Count > 0)
             {
                 entity.ResetPhysics();
                 entity.Transform.Position = _initialPositions[entity];

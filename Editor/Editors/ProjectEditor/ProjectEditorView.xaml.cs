@@ -88,6 +88,8 @@ public partial class ProjectEditorView : UserControl
         entities.CollectionChanged += GameEntities_CollectionChanged;
         physicsManager = new PhysicsManager(entities.ToList());
         fpsComboBox.SelectedIndex = 1;
+
+        scriptManager.LoadAllScripts(entities);
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -113,6 +115,7 @@ public partial class ProjectEditorView : UserControl
             foreach (GameEntity newEntity in e.NewItems)
             {
                 physicsManager.AddEntity(newEntity);
+                scriptManager.LoadScriptsForEntity(newEntity);
             }
         }
 

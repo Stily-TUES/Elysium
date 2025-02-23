@@ -2,17 +2,16 @@
 using NLua;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Editor.Scripting;
 
-[DataContract]
 public class ScriptManager
 {
     private static ScriptManager _instance;
     public static ScriptManager Instance => _instance ??= new ScriptManager();
 
-    [DataMember]
     private Dictionary<GameEntity, List<Lua>> _scripts = new Dictionary<GameEntity, List<Lua>>();
 
     public void AddScript(GameEntity entity, string scriptPath)
@@ -24,6 +23,8 @@ public class ScriptManager
 
         var lua = new Lua();
         lua["ScriptPath"] = scriptPath;
+
+        lua.RegisterFunction("print", this, GetType().GetMethod("LuaPrint"));
 
         lua.DoFile(scriptPath);
         _scripts[entity].Add(lua);
@@ -84,7 +85,17 @@ public class ScriptManager
     private void CallLuaFunction(dynamic scriptInstance, string functionName, params object[] args)
     {
         var function = scriptInstance[functionName] as LuaFunction;
-        function?.Call(scriptInstance, args);
+        if (function != null)
+        {
+            if (args.Length == 1 && args[0] is float)
+            {
+                function.Call(scriptInstance, (object)args[0]);
+            }
+            else
+            {
+                function.Call(scriptInstance, args);
+            }
+        }
     }
 
     public Lua GetLuaInstance(GameEntity entity)
@@ -94,6 +105,45 @@ public class ScriptManager
             return luaScripts.FirstOrDefault();
         }
         return null;
+    }
+
+    public void LuaPrint(params object[] args)
+    {
+        foreach (var arg in args)
+        {
+            Debug.WriteLine(arg?.ToString());
+        }
+    }
+
+    public void LoadScriptsForEntity(GameEntity entity)
+    {
+        if (!_scripts.ContainsKey(entity))
+        {
+            _scripts[entity] = new List<Lua>();
+        }
+
+        foreach (var scriptFile in entity.Scripts)
+        {
+            var lua = new Lua();
+            lua["ScriptPath"] = scriptFile.FilePath;
+
+            lua.RegisterFunction("print", this, GetType().GetMethod("LuaPrint"));
+
+            lua.DoFile(scriptFile.FilePath);
+            _scripts[entity].Add(lua);
+
+            dynamic scriptInstance = lua["Script"];
+            scriptInstance["entity"] = entity;
+            CallLuaFunction(scriptInstance, "Start");
+        }
+    }
+
+    public void LoadAllScripts(IEnumerable<GameEntity> entities)
+    {
+        foreach (var entity in entities)
+        {
+            LoadScriptsForEntity(entity);
+        }
     }
 }
 
