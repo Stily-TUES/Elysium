@@ -27,25 +27,24 @@ public class PhysicsManager
 
     public void OnTick(float deltaTime)
     {
-        if (_isSimulationRunning)
+        if (!_isSimulationRunning)
+            return;
+        var grid = new Dictionary<(int, int), List<GameEntity>>();
+        foreach (var entity in _entities)
         {
-            var grid = new Dictionary<(int, int), List<GameEntity>>();
-            foreach (var entity in _entities)
+            var gridPos = (x: (int)(entity.Transform.Position.X / gridSize), y: (int)(entity.Transform.Position.Y / gridSize));
+            if (!grid.ContainsKey(gridPos))
             {
-                var gridPos = (x: (int)(entity.Transform.Position.X / gridSize), y: (int)(entity.Transform.Position.Y / gridSize));
-                if (!grid.ContainsKey(gridPos))
-                {
-                    grid[gridPos] = new List<GameEntity>();
-                }
-                grid[gridPos].Add(entity);
+                grid[gridPos] = new List<GameEntity>();
             }
+            grid[gridPos].Add(entity);
+        }
 
-            foreach (var entity in _entities)
-            {
-                entity.ApplyPhysics(deltaTime);
-                CheckCollisions(entity, deltaTime, grid);
-                _scriptManager.UpdateScript(entity, deltaTime);
-            }
+        foreach (var entity in _entities)
+        {
+            entity.ApplyPhysics(deltaTime);
+            CheckCollisions(entity, deltaTime, grid);
+            _scriptManager.UpdateScript(entity, deltaTime);
         }
     }
 

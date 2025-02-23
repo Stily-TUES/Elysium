@@ -22,6 +22,7 @@ using Editor.Components;
 using System.Diagnostics;
 using static OpenTK.Graphics.OpenGL.GL;
 using Editor.Scripting;
+using NLua;
 
 namespace Editor.Editors;
 
@@ -66,6 +67,8 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown += GlControl_MouseDown;
         glControl.MouseUp += GlControl_MouseUp;
         glControl.MouseWheel += GlControl_MouseWheel;
+        glControl.KeyDown += GlControl_KeyDown;
+        glControl.KeyUp += GlControl_KeyUp;
         windowsFormsHost.Child = glControl;
 
         var window = Window.GetWindow(this);
@@ -80,7 +83,7 @@ public partial class ProjectEditorView : UserControl
         renderer = new Renderer();
         backgroundMesh = Mesh.CreateSquare(backgroundMeshSize);
 
-        scriptManager = new ScriptManager();
+        scriptManager = ScriptManager.Instance;
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
         physicsManager = new PhysicsManager(entities.ToList());
@@ -95,6 +98,8 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown -= GlControl_MouseDown;
         glControl.MouseUp -= GlControl_MouseUp;
         glControl.MouseWheel -= GlControl_MouseWheel;
+        glControl.KeyDown -= GlControl_KeyDown;
+        glControl.KeyUp -= GlControl_KeyUp;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
 
@@ -202,6 +207,24 @@ public partial class ProjectEditorView : UserControl
         }
     }
 
+    private void GlControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        var lua = scriptManager.GetLuaInstance(selectedEntity);
+        if (lua != null)
+        {
+            lua.GetFunction("love.keypressed")?.Call(e.KeyCode.ToString().ToLower());
+        }
+    }
+
+    private void GlControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        var lua = scriptManager.GetLuaInstance(selectedEntity);
+        if (lua != null)
+        {
+            lua.GetFunction("love.keyreleased")?.Call(e.KeyCode.ToString().ToLower());
+        }
+    }
+
     private void GlControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
     {
         if (e.Delta > 0)
@@ -258,10 +281,6 @@ public partial class ProjectEditorView : UserControl
         if (ScriptFile.ScriptFiles.Any())
         {
             ScriptsListBox.ItemsSource = ScriptFile.ScriptFiles;
-        }
-        else
-        {
-            MessageBox.Show("Scripts folder not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

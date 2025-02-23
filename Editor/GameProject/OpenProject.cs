@@ -132,18 +132,6 @@ public class OpenProject
 
         WriteProjectData();
         //TODO: fix when creating new project RecentProject.Name get returns null
-        if (project.RecentProject.Name != null)
-        {
-            string projectTexturesFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Textures"));
-            TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
-        }
-
-        if (project.RecentProject.Name != null)
-        {
-            string projectScriptsFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", project.RecentProject.Name, "Scripts"));
-            ScriptFile.LoadScriptsFromDirectory(projectScriptsFolderPath);
-        }
-
 
         return ProjectManager.Load(project.FullPath);
     }

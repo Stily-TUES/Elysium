@@ -86,5 +86,14 @@ public class ScriptManager
         var function = scriptInstance[functionName] as LuaFunction;
         function?.Call(scriptInstance, args);
     }
+
+    public Lua GetLuaInstance(GameEntity entity)
+    {
+        if (_scripts.TryGetValue(entity, out List<Lua> luaScripts))
+        {
+            return luaScripts.FirstOrDefault();
+        }
+        return null;
+    }
 }
 
