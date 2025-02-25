@@ -1,5 +1,6 @@
 ﻿using Editor.Components;
-using NLua;
+using MoonSharp.Interpreter;
+using OpenTK.Graphics.ES11;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,134 +8,149 @@ using System.Runtime.Serialization;
 
 namespace Editor.Scripting;
 
+public class RunningScript
+{
+    public Script script;
+    public Table bindings;
+    public Table callbacks;
+    public Closure entry;
+
+    public GameEntity Entity { get; init; }
+    public ScriptFile File { get; init; }
+
+
+    public object InvokeCallback(string name, params object[] args)
+    {
+        try {
+            return callbacks.RawGet(name).Function.Call(args);
+        }
+        catch (ScriptRuntimeException ex)
+        {
+            Debug.WriteLine("Unhandled exception in lua script: " + ex.DecoratedMessage);
+            foreach (var el in ex.CallStack)
+            {
+                Debug.WriteLine("\tat" + el.Location + " in " + el.Name);
+            }
+            throw ex;
+        }
+    }
+
+    static RunningScript()
+    {
+        UserData.RegisterType<GameEntity>();
+        UserData.RegisterType<Transform>();
+    }
+
+    private Table CreateBindings()
+    {
+        var res = new Table(script);
+        res["is_key_down"] = DynValue.NewCallback((ctx, args) =>
+        {
+            var key = args.AsType(0, "is_key_down", MoonSharp.Interpreter.DataType.String).String;
+            // ???
+            var pressed = false;
+            return DynValue.NewBoolean(pressed);
+        });
+        res["callbacks"] = callbacks = new Table(script);
+        res["script_path"] = File.FilePath;
+        res["entity"] = Entity;
+        return res;
+    }
+
+    public void Load()
+    {
+        this.entry.Call();        
+    }
+
+    public RunningScript(ScriptFile file, GameEntity entity)
+    {
+        this.Entity = entity;
+        this.File = file;
+        this.script = new Script();
+        this.bindings = CreateBindings();
+        script.Globals["script"] = this.bindings;
+        this.entry = script.LoadFile(File.FilePath).Function;
+    }
+}
+
 public class ScriptManager
 {
     private static ScriptManager _instance;
     public static ScriptManager Instance => _instance ??= new ScriptManager();
 
-    private Dictionary<GameEntity, List<Lua>> _scripts = new Dictionary<GameEntity, List<Lua>>();
+    private Dictionary<GameEntity, List<RunningScript>> _scripts = new Dictionary<GameEntity, List<RunningScript>>();
+
+    public List<RunningScript> InvokeCallbacks(string name, GameEntity? entity = null, params object[] args)
+    {
+        List<RunningScript> scripts;
+
+        if (entity == null)
+        {
+            scripts = new (_scripts.Values.SelectMany(v => v));
+        }
+        else
+        {
+            scripts = _scripts[entity];
+        }
+
+        foreach (var script in scripts)
+        {
+            script.InvokeCallback(name, args);
+        }
+
+        return scripts;
+    }
 
     public void AddScript(GameEntity entity, string scriptPath)
     {
-        if (!_scripts.ContainsKey(entity))
-        {
-            _scripts[entity] = new List<Lua>();
-        }
 
-        var lua = new Lua();
-        lua["ScriptPath"] = scriptPath;
+        var file = new ScriptFile { FilePath = scriptPath, FileName = System.IO.Path.GetFileName(scriptPath) };
+        var script = new RunningScript(file, entity);
 
-        lua.RegisterFunction("print", this, GetType().GetMethod("LuaPrint"));
+        _scripts[entity] ??= new List<RunningScript>();
+        _scripts[entity].Add(script);
 
-        lua.DoFile(scriptPath);
-        _scripts[entity].Add(lua);
+        entity.Scripts.Add(file);
 
-        dynamic scriptInstance = lua["Script"];
-        scriptInstance["entity"] = entity;
-        CallLuaFunction(scriptInstance, "Start");
-
-        var scriptFile = new ScriptFile { FilePath = scriptPath, FileName = System.IO.Path.GetFileName(scriptPath) };
-        entity.Scripts.Add(scriptFile);
     }
 
     public void RemoveScript(GameEntity entity, string scriptPath)
     {
-        if (_scripts.TryGetValue(entity, out List<Lua> luaScripts))
+        if (entity == null) throw new Exception("no.");
+
+        _scripts[entity]?.Find(v => v.File.FilePath == scriptPath)?.InvokeCallback("destroy");
+        var file = entity.Scripts.FirstOrDefault(v => v.FilePath == scriptPath);
+        if (file != null)
         {
-            var lua = luaScripts.FirstOrDefault(l => l["ScriptPath"].ToString() == scriptPath);
-            if (lua != null)
-            {
-                dynamic scriptInstance = lua["Script"];
-                CallLuaFunction(scriptInstance, "OnDestroy");
-                luaScripts.Remove(lua);
-                var scriptFile = entity.Scripts.FirstOrDefault(s => s.FilePath == scriptPath);
-                if (scriptFile != null)
-                {
-                    entity.Scripts.Remove(scriptFile);
-                }
-            }
+            entity.Scripts.Remove(file);
         }
     }
 
     public void UpdateScript(GameEntity entity, float deltaTime)
     {
-        if (_scripts.TryGetValue(entity, out List<Lua> luaScripts))
-        {
-            foreach (var lua in luaScripts)
-            {
-                dynamic scriptInstance = lua["Script"];
-                CallLuaFunction(scriptInstance, "Update", deltaTime);
-            }
-        }
+        InvokeCallbacks("update", entity, deltaTime);
     }
 
     public void Dispose()
     {
-        foreach (var luaScripts in _scripts.Values)
-        {
-            foreach (var lua in luaScripts)
-            {
-                dynamic scriptInstance = lua["Script"];
-                CallLuaFunction(scriptInstance, "OnDestroy");
-                lua.Dispose();
-            }
-        }
+        InvokeCallbacks("destroy");
         _scripts.Clear();
     }
 
-    private void CallLuaFunction(dynamic scriptInstance, string functionName, params object[] args)
+    private void LoadSingleScript(GameEntity entity, ScriptFile file)
     {
-        var function = scriptInstance[functionName] as LuaFunction;
-        if (function != null)
-        {
-            if (args.Length == 1 && args[0] is float)
-            {
-                function.Call(scriptInstance, (object)args[0]);
-            }
-            else
-            {
-                function.Call(scriptInstance, args);
-            }
-        }
-    }
+        var script = new RunningScript(file, entity);
 
-    public Lua GetLuaInstance(GameEntity entity)
-    {
-        if (_scripts.TryGetValue(entity, out List<Lua> luaScripts))
-        {
-            return luaScripts.FirstOrDefault();
-        }
-        return null;
-    }
-
-    public void LuaPrint(params object[] args)
-    {
-        foreach (var arg in args)
-        {
-            Debug.WriteLine(arg?.ToString());
-        }
+        script.Load();
+        _scripts.TryAdd(entity, new());
+        _scripts[entity].Add(script);
     }
 
     public void LoadScriptsForEntity(GameEntity entity)
     {
-        if (!_scripts.ContainsKey(entity))
-        {
-            _scripts[entity] = new List<Lua>();
-        }
-
         foreach (var scriptFile in entity.Scripts)
         {
-            var lua = new Lua();
-            lua["ScriptPath"] = scriptFile.FilePath;
-
-            lua.RegisterFunction("print", this, GetType().GetMethod("LuaPrint"));
-
-            lua.DoFile(scriptFile.FilePath);
-            _scripts[entity].Add(lua);
-
-            dynamic scriptInstance = lua["Script"];
-            scriptInstance["entity"] = entity;
-            CallLuaFunction(scriptInstance, "Start");
+            LoadSingleScript(entity, scriptFile);
         }
     }
 

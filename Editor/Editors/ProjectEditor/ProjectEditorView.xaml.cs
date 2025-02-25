@@ -22,7 +22,6 @@ using Editor.Components;
 using System.Diagnostics;
 using static OpenTK.Graphics.OpenGL.GL;
 using Editor.Scripting;
-using NLua;
 
 namespace Editor.Editors;
 
@@ -67,8 +66,6 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown += GlControl_MouseDown;
         glControl.MouseUp += GlControl_MouseUp;
         glControl.MouseWheel += GlControl_MouseWheel;
-        glControl.KeyDown += GlControl_KeyDown;
-        glControl.KeyUp += GlControl_KeyUp;
         windowsFormsHost.Child = glControl;
 
         var window = Window.GetWindow(this);
@@ -100,12 +97,11 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown -= GlControl_MouseDown;
         glControl.MouseUp -= GlControl_MouseUp;
         glControl.MouseWheel -= GlControl_MouseWheel;
-        glControl.KeyDown -= GlControl_KeyDown;
-        glControl.KeyUp -= GlControl_KeyUp;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
 
         backgroundMesh.Dispose();
+        scriptManager.Dispose();
     }
 
     private void GameEntities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -210,23 +206,6 @@ public partial class ProjectEditorView : UserControl
         }
     }
 
-    private void GlControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-    {
-        var lua = scriptManager.GetLuaInstance(selectedEntity);
-        if (lua != null)
-        {
-            lua.GetFunction("love.keypressed")?.Call(e.KeyCode.ToString().ToLower());
-        }
-    }
-
-    private void GlControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
-    {
-        var lua = scriptManager.GetLuaInstance(selectedEntity);
-        if (lua != null)
-        {
-            lua.GetFunction("love.keyreleased")?.Call(e.KeyCode.ToString().ToLower());
-        }
-    }
 
     private void GlControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
     {
