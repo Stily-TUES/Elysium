@@ -42,7 +42,7 @@ public class PhysicsManager
 
         foreach (var entity in _entities)
         {
-            _scriptManager.UpdateScript(entity, deltaTime);
+            _scriptManager.UpdateScripts(entity, deltaTime);
             entity.ApplyPhysics(deltaTime);
             CheckCollisions(entity, deltaTime, grid);
         }

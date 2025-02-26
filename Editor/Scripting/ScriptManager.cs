@@ -18,21 +18,9 @@ public class RunningScript
     public GameEntity Entity { get; init; }
     public ScriptFile File { get; init; }
 
-
     public object InvokeCallback(string name, params object[] args)
     {
-        try {
-            return callbacks.RawGet(name).Function.Call(args);
-        }
-        catch (ScriptRuntimeException ex)
-        {
-            Debug.WriteLine("Unhandled exception in lua script: " + ex.DecoratedMessage);
-            foreach (var el in ex.CallStack)
-            {
-                Debug.WriteLine("\tat" + el.Location + " in " + el.Name);
-            }
-            throw ex;
-        }
+        return script.Call(callbacks[name], args);
     }
 
     static RunningScript()
@@ -47,19 +35,24 @@ public class RunningScript
         res["is_key_down"] = DynValue.NewCallback((ctx, args) =>
         {
             var key = args.AsType(0, "is_key_down", MoonSharp.Interpreter.DataType.String).String;
-            // ???
-            var pressed = false;
+            // ??? 
+            var pressed = true;
             return DynValue.NewBoolean(pressed);
         });
         res["callbacks"] = callbacks = new Table(script);
         res["script_path"] = File.FilePath;
         res["entity"] = Entity;
+
+        callbacks["update"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
+        callbacks["start"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
+        callbacks["destroy"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
+
         return res;
     }
 
     public void Load()
     {
-        this.entry.Call();        
+        this.entry.Call();
     }
 
     public RunningScript(ScriptFile file, GameEntity entity)
@@ -86,7 +79,7 @@ public class ScriptManager
 
         if (entity == null)
         {
-            scripts = new (_scripts.Values.SelectMany(v => v));
+            scripts = new(_scripts.Values.SelectMany(v => v));
         }
         else
         {
@@ -103,20 +96,25 @@ public class ScriptManager
 
     public void AddScript(GameEntity entity, string scriptPath)
     {
+        Debug.WriteLine($"Adding script: {scriptPath} to entity: {entity.Name}");
 
         var file = new ScriptFile { FilePath = scriptPath, FileName = System.IO.Path.GetFileName(scriptPath) };
         var script = new RunningScript(file, entity);
 
-        _scripts[entity] ??= new List<RunningScript>();
+        if (!_scripts.ContainsKey(entity))
+        {
+            _scripts[entity] = new List<RunningScript>();
+        }
         _scripts[entity].Add(script);
 
-        entity.Scripts.Add(file);
+        script.InvokeCallback("start");
 
+        entity.Scripts.Add(file);
     }
 
     public void RemoveScript(GameEntity entity, string scriptPath)
     {
-        if (entity == null) throw new Exception("no.");
+        Debug.WriteLine($"Removing script: {scriptPath} from entity: {entity.Name}");
 
         _scripts[entity]?.Find(v => v.File.FilePath == scriptPath)?.InvokeCallback("destroy");
         var file = entity.Scripts.FirstOrDefault(v => v.FilePath == scriptPath);
@@ -124,9 +122,10 @@ public class ScriptManager
         {
             entity.Scripts.Remove(file);
         }
+        //_scripts[entity].Remove(_scripts[entity].Find(v => v.File.FilePath == scriptPath));
     }
 
-    public void UpdateScript(GameEntity entity, float deltaTime)
+    public void UpdateScripts(GameEntity entity, float deltaTime)
     {
         InvokeCallbacks("update", entity, deltaTime);
     }
@@ -139,11 +138,14 @@ public class ScriptManager
 
     private void LoadSingleScript(GameEntity entity, ScriptFile file)
     {
+        Debug.WriteLine($"Loading single script: {file.FilePath} for entity: {entity.Name}");
+
         var script = new RunningScript(file, entity);
 
         script.Load();
         _scripts.TryAdd(entity, new());
         _scripts[entity].Add(script);
+        script.InvokeCallback("start");
     }
 
     public void LoadScriptsForEntity(GameEntity entity)
