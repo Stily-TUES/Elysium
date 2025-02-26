@@ -14,7 +14,7 @@ public class PhysicsManager
 {
     private readonly List<GameEntity> _entities;
     private readonly Dictionary<GameEntity, Vector3> _initialPositions;
-    private bool _isSimulationRunning;
+    public bool isSimulationRunning;
     private float gridSize;
     private readonly ScriptManager _scriptManager;
 
@@ -27,7 +27,7 @@ public class PhysicsManager
 
     public void OnTick(float deltaTime)
     {
-        if (!_isSimulationRunning)
+        if (!isSimulationRunning)
             return;
         var grid = new Dictionary<(int, int), List<GameEntity>>();
         foreach (var entity in _entities)
@@ -87,12 +87,12 @@ public class PhysicsManager
     public void StartSimulation()
     {
         gridSize = CalculateMaxEntitySize() * 1.5f;
-        _isSimulationRunning = true;
+        isSimulationRunning = true;
     }
 
     public void StopSimulation()
     {
-        _isSimulationRunning = false;
+        isSimulationRunning = false;
         Stop();
     }
 
@@ -110,7 +110,7 @@ public class PhysicsManager
 
     public void UpdateInitialPosition(GameEntity entity)
     {
-        if (!_isSimulationRunning)
+        if (!isSimulationRunning)
         {
             _initialPositions[entity] = entity.Transform.Position;
         }

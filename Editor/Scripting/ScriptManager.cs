@@ -13,6 +13,7 @@ public class RunningScript
     public Script script;
     public Table bindings;
     public Table callbacks;
+    public Table keyStates;
     public Closure entry;
 
     public GameEntity Entity { get; init; }
@@ -20,7 +21,16 @@ public class RunningScript
 
     public object InvokeCallback(string name, params object[] args)
     {
-        return script.Call(callbacks[name], args);
+        try
+        {
+            return script.Call(callbacks[name], args);
+        }
+        catch (ScriptRuntimeException ex)
+        {
+            Debug.WriteLine($"Exception in InvokeCallback('{name}'): {ex.DecoratedMessage}");
+            return DynValue.Nil;
+        }
+
         //var callback = callbacks.RawGet(name).Function;
         //if (callback != null)
         //{
@@ -42,10 +52,11 @@ public class RunningScript
     private Table CreateBindings()
     {
         var res = new Table(script);
+        keyStates = new Table(script);
         res["is_key_down"] = DynValue.NewCallback((ctx, args) =>
         {
             var key = args.AsType(0, "is_key_down", MoonSharp.Interpreter.DataType.String).String;
-            var pressed = true;
+            var pressed = keyStates.Get(key).Boolean;
             return DynValue.NewBoolean(pressed);
         });
         res["callbacks"] = callbacks = new Table(script);
@@ -62,6 +73,16 @@ public class RunningScript
     public void Load()
     {
         this.entry.Call();
+    }
+
+    public void OnKeyDown(string key)
+    {
+        keyStates[key] = DynValue.NewBoolean(true);
+    }
+
+    public void OnKeyUp(string key)
+    {
+        keyStates[key] = DynValue.NewBoolean(false);
     }
 
     public RunningScript(ScriptFile file, GameEntity entity)
@@ -180,5 +201,7 @@ public class ScriptManager
             LoadScriptsForEntity(entity);
         }
     }
+
+
 }
 

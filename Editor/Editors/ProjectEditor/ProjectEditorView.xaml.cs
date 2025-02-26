@@ -44,7 +44,6 @@ public partial class ProjectEditorView : UserControl
     private Mesh backgroundMesh;
     private PhysicsManager physicsManager;
     private ScriptManager scriptManager;
-    private bool isPhysicsRunning;
     private float backgroundMeshSize = 2.0f;
     private int fpsMilliseconds = 16;
 
@@ -66,6 +65,8 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown += GlControl_MouseDown;
         glControl.MouseUp += GlControl_MouseUp;
         glControl.MouseWheel += GlControl_MouseWheel;
+        glControl.KeyDown += GlControl_KeyDown;
+        glControl.KeyUp += GlControl_KeyUp;
         windowsFormsHost.Child = glControl;
 
         var window = Window.GetWindow(this);
@@ -87,6 +88,8 @@ public partial class ProjectEditorView : UserControl
         fpsComboBox.SelectedIndex = 1;
 
         scriptManager.LoadAllScripts(entities);
+
+        glControl.Focus();
     }
 
     private void ProjectEditorView_Unloaded(object sender, RoutedEventArgs e)
@@ -97,6 +100,8 @@ public partial class ProjectEditorView : UserControl
         glControl.MouseDown -= GlControl_MouseDown;
         glControl.MouseUp -= GlControl_MouseUp;
         glControl.MouseWheel -= GlControl_MouseWheel;
+        glControl.KeyDown -= GlControl_KeyDown;
+        glControl.KeyUp -= GlControl_KeyUp;
         renderTimer.Stop();
         renderTimer.Tick -= RenderTimer_Tick;
 
@@ -230,6 +235,35 @@ public partial class ProjectEditorView : UserControl
             isDragging = false;
         }
     }
+    private void GlControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        if(!physicsManager.isSimulationRunning)
+            return;
+
+        var key = e.KeyCode.ToString().ToLower();
+        foreach (var entity in projectManager.GetActiveScene().GameEntities)
+        {
+            foreach (var script in scriptManager.InvokeCallbacks("update", entity))
+            {
+                script.OnKeyDown(key);
+            }
+        }
+    }
+
+    private void GlControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        if (!physicsManager.isSimulationRunning)
+            return;
+        var key = e.KeyCode.ToString().ToLower();
+        foreach (var entity in projectManager.GetActiveScene().GameEntities)
+        {
+            foreach (var script in scriptManager.InvokeCallbacks("update", entity))
+            {
+                script.OnKeyUp(key);
+            }
+        }
+    }
+
 
     private void Render()
     {
@@ -284,6 +318,7 @@ public partial class ProjectEditorView : UserControl
     private void RunPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
         physicsManager.StartSimulation();
+        glControl.Focus();
     }
 
     private void StopPhysicsButton_Click(object sender, RoutedEventArgs e)
