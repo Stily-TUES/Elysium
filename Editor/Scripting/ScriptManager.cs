@@ -21,6 +21,16 @@ public class RunningScript
     public object InvokeCallback(string name, params object[] args)
     {
         return script.Call(callbacks[name], args);
+        //var callback = callbacks.RawGet(name).Function;
+        //if (callback != null)
+        //{
+        //    return callback.Call(args);
+        //}
+        //else
+        //{
+        //    Debug.WriteLine($"Callback '{name}' not found.");
+        //    return DynValue.Nil;
+        //}
     }
 
     static RunningScript()
@@ -35,7 +45,6 @@ public class RunningScript
         res["is_key_down"] = DynValue.NewCallback((ctx, args) =>
         {
             var key = args.AsType(0, "is_key_down", MoonSharp.Interpreter.DataType.String).String;
-            // ??? 
             var pressed = true;
             return DynValue.NewBoolean(pressed);
         });
@@ -63,6 +72,7 @@ public class RunningScript
         this.bindings = CreateBindings();
         script.Globals["script"] = this.bindings;
         this.entry = script.LoadFile(File.FilePath).Function;
+        Load();
     }
 }
 
@@ -98,6 +108,8 @@ public class ScriptManager
     {
         Debug.WriteLine($"Adding script: {scriptPath} to entity: {entity.Name}");
 
+        RemoveScript(entity, scriptPath);
+
         var file = new ScriptFile { FilePath = scriptPath, FileName = System.IO.Path.GetFileName(scriptPath) };
         var script = new RunningScript(file, entity);
 
@@ -116,13 +128,18 @@ public class ScriptManager
     {
         Debug.WriteLine($"Removing script: {scriptPath} from entity: {entity.Name}");
 
-        _scripts[entity]?.Find(v => v.File.FilePath == scriptPath)?.InvokeCallback("destroy");
+        var script = _scripts[entity]?.Find(v => v.File.FilePath == scriptPath);
+        if (script != null)
+        {
+            script.InvokeCallback("destroy");
+            _scripts[entity].Remove(script);
+        }
+
         var file = entity.Scripts.FirstOrDefault(v => v.FilePath == scriptPath);
         if (file != null)
         {
             entity.Scripts.Remove(file);
         }
-        //_scripts[entity].Remove(_scripts[entity].Find(v => v.File.FilePath == scriptPath));
     }
 
     public void UpdateScripts(GameEntity entity, float deltaTime)
