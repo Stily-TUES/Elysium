@@ -114,7 +114,8 @@ public class ScriptManager
         }
         else
         {
-            scripts = _scripts[entity];
+            scripts = _scripts.GetValueOrDefault(entity) ?? new ();
+
         }
 
         foreach (var script in scripts)

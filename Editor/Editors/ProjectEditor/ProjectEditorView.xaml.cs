@@ -188,6 +188,7 @@ public partial class ProjectEditorView : UserControl
         }
         if (e.Button == System.Windows.Forms.MouseButtons.Left)
         {
+            glControl.Focus();
             var entities = projectManager.GetActiveScene().GameEntities;
             List<GameEntity> selectedEntities = new List<GameEntity>();
             var mousePosition = camera.ScreenToWorldSpace(new(e.X, e.Y), glControl.Width, glControl.Height);
