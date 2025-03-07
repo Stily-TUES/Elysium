@@ -115,7 +115,6 @@ public class ScriptManager
         else
         {
             scripts = _scripts.GetValueOrDefault(entity) ?? new ();
-
         }
 
         foreach (var script in scripts)
@@ -150,18 +149,22 @@ public class ScriptManager
     {
         Debug.WriteLine($"Removing script: {scriptPath} from entity: {entity.Name}");
 
-        var script = _scripts[entity]?.Find(v => v.File.FilePath == scriptPath);
-        if (script != null)
+        if (_scripts.ContainsKey(entity))
         {
-            script.InvokeCallback("destroy");
-            _scripts[entity].Remove(script);
+            var script = _scripts[entity]?.Find(v => v.File.FilePath == scriptPath);
+            if (script != null)
+            {
+                script.InvokeCallback("destroy");
+                _scripts[entity].Remove(script);
+            }
+
+            var file = entity.Scripts.FirstOrDefault(v => v.FilePath == scriptPath);
+            if (file != null)
+            {
+                entity.Scripts.Remove(file);
+            }
         }
 
-        var file = entity.Scripts.FirstOrDefault(v => v.FilePath == scriptPath);
-        if (file != null)
-        {
-            entity.Scripts.Remove(file);
-        }
     }
 
     public void UpdateScripts(GameEntity entity, float deltaTime)
@@ -205,4 +208,5 @@ public class ScriptManager
 
 
 }
+
 
