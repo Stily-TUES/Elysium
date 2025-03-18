@@ -13,7 +13,6 @@ public class RunningScript
     public Script script;
     public Table bindings;
     public Table callbacks;
-    public Table keyStates;
     public Closure entry;
 
     public GameEntity Entity { get; init; }
@@ -52,11 +51,10 @@ public class RunningScript
     private Table CreateBindings()
     {
         var res = new Table(script);
-        keyStates = new Table(script);
         res["is_key_down"] = DynValue.NewCallback((ctx, args) =>
         {
             var key = args.AsType(0, "is_key_down", MoonSharp.Interpreter.DataType.String).String;
-            var pressed = keyStates.Get(key).Boolean;
+            var pressed = ScriptManager.Instance.KeyStates.Get(key).Boolean;
             return DynValue.NewBoolean(pressed);
         });
         res["callbacks"] = callbacks = new Table(script);
@@ -66,6 +64,8 @@ public class RunningScript
         callbacks["update"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
         callbacks["start"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
         callbacks["destroy"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
+        callbacks["key_down"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
+        callbacks["key_up"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
 
         return res;
     }
@@ -73,16 +73,6 @@ public class RunningScript
     public void Load()
     {
         this.entry.Call();
-    }
-
-    public void OnKeyDown(string key)
-    {
-        keyStates[key] = DynValue.NewBoolean(true);
-    }
-
-    public void OnKeyUp(string key)
-    {
-        keyStates[key] = DynValue.NewBoolean(false);
     }
 
     public RunningScript(ScriptFile file, GameEntity entity)
@@ -103,6 +93,12 @@ public class ScriptManager
     public static ScriptManager Instance => _instance ??= new ScriptManager();
 
     private Dictionary<GameEntity, List<RunningScript>> _scripts = new Dictionary<GameEntity, List<RunningScript>>();
+    public Table KeyStates { get; private set; }
+
+    private ScriptManager()
+    {
+        KeyStates = new Table(new Script());
+    }
 
     public List<RunningScript> InvokeCallbacks(string name, GameEntity? entity = null, params object[] args)
     {
@@ -114,7 +110,7 @@ public class ScriptManager
         }
         else
         {
-            scripts = _scripts.GetValueOrDefault(entity) ?? new ();
+            scripts = _scripts.GetValueOrDefault(entity) ?? new();
         }
 
         foreach (var script in scripts)
@@ -164,7 +160,6 @@ public class ScriptManager
                 entity.Scripts.Remove(file);
             }
         }
-
     }
 
     public void UpdateScripts(GameEntity entity, float deltaTime)
@@ -206,7 +201,15 @@ public class ScriptManager
         }
     }
 
+    public void OnKeyDown(string key)
+    {
+        KeyStates[key] = DynValue.NewBoolean(true);
+    }
 
+    public void OnKeyUp(string key)
+    {
+        KeyStates[key] = DynValue.NewBoolean(false);
+    }
 }
 
 

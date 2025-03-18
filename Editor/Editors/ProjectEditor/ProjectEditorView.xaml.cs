@@ -238,32 +238,18 @@ public partial class ProjectEditorView : UserControl
     }
     private void GlControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
     {
-        if(!physicsManager.isSimulationRunning)
-            return;
-
         var key = e.KeyCode.ToString().ToLower();
-        foreach (var entity in projectManager.GetActiveScene().GameEntities)
-        {
-            foreach (var script in scriptManager.InvokeCallbacks("update", entity))
-            {
-                script.OnKeyDown(key);
-            }
-        }
+        ScriptManager.Instance.OnKeyDown(key);
+        scriptManager.InvokeCallbacks("key_down", null, key);
     }
 
     private void GlControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
     {
-        if (!physicsManager.isSimulationRunning)
-            return;
         var key = e.KeyCode.ToString().ToLower();
-        foreach (var entity in projectManager.GetActiveScene().GameEntities)
-        {
-            foreach (var script in scriptManager.InvokeCallbacks("update", entity))
-            {
-                script.OnKeyUp(key);
-            }
-        }
+        ScriptManager.Instance.OnKeyUp(key);
+        scriptManager.InvokeCallbacks("key_up", null, key);
     }
+
 
 
     private void Render()
