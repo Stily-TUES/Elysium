@@ -240,14 +240,12 @@ public partial class ProjectEditorView : UserControl
     {
         var key = e.KeyCode.ToString().ToLower();
         ScriptManager.Instance.OnKeyDown(key);
-        scriptManager.InvokeCallbacks("key_down", null, key);
     }
 
     private void GlControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
     {
         var key = e.KeyCode.ToString().ToLower();
         ScriptManager.Instance.OnKeyUp(key);
-        scriptManager.InvokeCallbacks("key_up", null, key);
     }
 
 

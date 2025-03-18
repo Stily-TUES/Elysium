@@ -64,8 +64,6 @@ public class RunningScript
         callbacks["update"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
         callbacks["start"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
         callbacks["destroy"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
-        callbacks["key_down"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
-        callbacks["key_up"] = DynValue.NewCallback((ctx, args) => DynValue.Nil);
 
         return res;
     }
