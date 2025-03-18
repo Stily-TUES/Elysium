@@ -1,6 +1,7 @@
 ﻿using Editor.Components;
 using MoonSharp.Interpreter;
 using OpenTK.Graphics.ES11;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,6 +58,14 @@ public class RunningScript
             var pressed = ScriptManager.Instance.KeyStates.Get(key).Boolean;
             return DynValue.NewBoolean(pressed);
         });
+        res["create_projectile"] = DynValue.NewCallback((ctx, args) =>
+        {
+            var position = args[0].ToObject<Vector3>();
+            var direction = args[1].ToObject<Vector3>();
+            var speed = (float)args[2].Number;
+            var projectile = ScriptManager.Instance.GetGameMechanics().CreateProjectile(position, direction, speed);
+            return UserData.Create(projectile);
+        });
         res["callbacks"] = callbacks = new Table(script);
         res["script_path"] = File.FilePath;
         res["entity"] = Entity;
@@ -92,7 +101,7 @@ public class ScriptManager
 
     private Dictionary<GameEntity, List<RunningScript>> _scripts = new Dictionary<GameEntity, List<RunningScript>>();
     public Table KeyStates { get; private set; }
-
+    private GameMechanics gameMechanics;
     private ScriptManager()
     {
         KeyStates = new Table(new Script());
@@ -208,6 +217,13 @@ public class ScriptManager
     {
         KeyStates[key] = DynValue.NewBoolean(false);
     }
+
+    public GameMechanics GetGameMechanics()
+    {
+        return gameMechanics;
+    }
+
+
 }
 
 

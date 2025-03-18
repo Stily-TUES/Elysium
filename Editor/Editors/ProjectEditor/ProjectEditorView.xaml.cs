@@ -46,7 +46,7 @@ public partial class ProjectEditorView : UserControl
     private ScriptManager scriptManager;
     private float backgroundMeshSize = 2.0f;
     private int fpsMilliseconds = 16;
-
+    private GameMechanics gameMechanics;
     public ProjectEditorView()
     {
         InitializeComponent();
@@ -81,6 +81,7 @@ public partial class ProjectEditorView : UserControl
         renderer = new Renderer();
         backgroundMesh = Mesh.CreateSquare(backgroundMeshSize);
 
+        gameMechanics = new GameMechanics(projectManager);
         scriptManager = ScriptManager.Instance;
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
