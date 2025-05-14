@@ -14,7 +14,7 @@ public class Physics : Component
 {
     public Vector3 velocity;
     [DataMember]
-    private readonly float _gravity = -9.81f;
+    public float gravity = -9.81f;
     public bool IsColliding { get; set; }
 
     public Physics(GameEntity owner) : base(owner)
@@ -39,6 +39,6 @@ public class Physics : Component
 
     private float CalculateGravity(float mass)
     {
-        return _gravity * mass;
+        return gravity * mass;
     }
 }

@@ -42,7 +42,7 @@ public partial class ProjectEditorView : UserControl
     private Vector2 dragDelta;
     private int backgroundTextureId;
     private Mesh backgroundMesh;
-    private PhysicsManager physicsManager;
+    private SimulationManager simulationManager;
     private ScriptManager scriptManager;
     private float backgroundMeshSize = 2.0f;
     private int fpsMilliseconds = 16;
@@ -85,7 +85,7 @@ public partial class ProjectEditorView : UserControl
         scriptManager = ScriptManager.Instance;
         var entities = projectManager.GetActiveScene().GameEntities;
         entities.CollectionChanged += GameEntities_CollectionChanged;
-        physicsManager = new PhysicsManager(entities.ToList());
+        simulationManager = new SimulationManager(entities.ToList());
         fpsComboBox.SelectedIndex = 1;
 
         scriptManager.LoadAllScripts(entities);
@@ -116,7 +116,7 @@ public partial class ProjectEditorView : UserControl
         {
             foreach (GameEntity newEntity in e.NewItems)
             {
-                physicsManager.AddEntity(newEntity);
+                simulationManager.AddEntity(newEntity);
                 scriptManager.LoadScriptsForEntity(newEntity);
             }
         }
@@ -125,7 +125,7 @@ public partial class ProjectEditorView : UserControl
         {
             foreach (GameEntity oldEntity in e.OldItems)
             {
-                physicsManager.RemoveEntity(oldEntity);
+                simulationManager.RemoveEntity(oldEntity);
             }
         }
     }
@@ -155,7 +155,7 @@ public partial class ProjectEditorView : UserControl
     private void RenderTimer_Tick(object sender, EventArgs e)
     {
         float deltaTime = (float)renderTimer.Interval.TotalSeconds;
-        physicsManager.OnTick(deltaTime);
+        simulationManager.OnTick(deltaTime);
         camera.Update();
         glControl.Invalidate();
     }
@@ -174,7 +174,7 @@ public partial class ProjectEditorView : UserControl
             if (selectedEntity != null)
             {
                 selectedEntity.Transform.Position += new OpenTK.Mathematics.Vector3(deltaX, -deltaY, 0);
-                physicsManager.UpdateInitialPosition(selectedEntity);
+                simulationManager.UpdateInitialPosition(selectedEntity);
                 glControl.Invalidate();
             }
         }
@@ -303,13 +303,13 @@ public partial class ProjectEditorView : UserControl
 
     private void RunPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
-        physicsManager.StartSimulation();
+        simulationManager.StartSimulation();
         glControl.Focus();
     }
 
     private void StopPhysicsButton_Click(object sender, RoutedEventArgs e)
     {
-        physicsManager.StopSimulation();
+        simulationManager.StopSimulation();
     }
 
     private void onTextureDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

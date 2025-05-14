@@ -10,7 +10,7 @@ using System.Text;
 
 
 namespace Editor.Utils;
-public class PhysicsManager
+public class SimulationManager
 {
     private readonly List<GameEntity> _entities;
     private readonly Dictionary<GameEntity, Vector3> _initialPositions;
@@ -18,7 +18,7 @@ public class PhysicsManager
     private float gridSize;
     private readonly ScriptManager _scriptManager;
 
-    public PhysicsManager(List<GameEntity> entities)
+    public SimulationManager(List<GameEntity> entities)
     {
         _entities = entities;
         _initialPositions = entities.ToDictionary(e => e, e => e.Transform.Position);

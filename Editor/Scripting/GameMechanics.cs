@@ -14,23 +14,23 @@ namespace Editor.Scripting
             this.projectManager = projectManager;
         }
 
-        public GameEntity CreateProjectile(Vector3 position, Vector3 direction, float speed)
-        {
-            var projectile = new GameEntity(projectManager.GetActiveScene());
-            projectile.Transform = new Transform(projectile)
-            {
-                Position = position
-            };
-            projectile.Physics = new Physics(projectile)
-            {
-                velocity = direction * speed
-            };
-            return projectile;
-        }
+        //public GameEntity CreateProjectile(Vector3 position, Vector3 direction, float speed)
+        //{
+        //    var projectile = new GameEntity(projectManager.GetActiveScene());
+        //    projectile.Transform = new Transform(projectile)
+        //    {
+        //        Position = position
+        //    };
+        //    projectile.Physics = new Physics(projectile)
+        //    {
+        //        velocity = direction * speed
+        //    };
+        //    return projectile;
+        //}
 
-        public void AddEntityToScene(GameEntity entity)
-        {
-            projectManager.GetActiveScene().GameEntities.Add(entity);
-        }
+        //public void AddEntityToScene(GameEntity entity)
+        //{
+        //    projectManager.GetActiveScene().GameEntities.Add(entity);
+        //}
     }
 }

@@ -58,14 +58,14 @@ public class RunningScript
             var pressed = ScriptManager.Instance.KeyStates.Get(key).Boolean;
             return DynValue.NewBoolean(pressed);
         });
-        res["create_projectile"] = DynValue.NewCallback((ctx, args) =>
-        {
-            var position = args[0].ToObject<Vector3>();
-            var direction = args[1].ToObject<Vector3>();
-            var speed = (float)args[2].Number;
-            var projectile = ScriptManager.Instance.GetGameMechanics().CreateProjectile(position, direction, speed);
-            return UserData.Create(projectile);
-        });
+        //res["create_projectile"] = DynValue.NewCallback((ctx, args) =>
+        //{
+        //    var position = args[0].ToObject<Vector3>();
+        //    var direction = args[1].ToObject<Vector3>();
+        //    var speed = (float)args[2].Number;
+        //    var projectile = ScriptManager.Instance.GetGameMechanics().CreateProjectile(position, direction, speed);
+        //    return UserData.Create(projectile);
+        //});
         res["callbacks"] = callbacks = new Table(script);
         res["script_path"] = File.FilePath;
         res["entity"] = Entity;
@@ -182,7 +182,7 @@ public class ScriptManager
 
     private void LoadSingleScript(GameEntity entity, ScriptFile file)
     {
-        Debug.WriteLine($"Loading single script: {file.FilePath} for entity: {entity.Name}");
+        Debug.WriteLine($"Loading single script {file.FilePath} for entity {entity.Name}");
 
         var script = new RunningScript(file, entity);
 
@@ -216,11 +216,6 @@ public class ScriptManager
     public void OnKeyUp(string key)
     {
         KeyStates[key] = DynValue.NewBoolean(false);
-    }
-
-    public GameMechanics GetGameMechanics()
-    {
-        return gameMechanics;
     }
 
 

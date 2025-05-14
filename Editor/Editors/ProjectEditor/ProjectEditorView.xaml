@@ -98,7 +98,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5" MouseLeftButtonDown="onScriptDrag_MouseLeftButtonDown">
-                                    <Image Source="pack://application:,,,/Resources/document_icon.png" Width="50" Height="50" Margin="5"/>
+                                    <Image Source="{Binding ScriptIcon}" Width="50" Height="50" Margin="5"/>
                                     <TextBlock Text="{Binding FileName}" Foreground="White" TextAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>

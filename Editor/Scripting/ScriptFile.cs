@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,22 @@ public class ScriptFile
     public string FileName { get; set; }
     [DataMember]
     public string FilePath { get; set; }
+
+    [IgnoreDataMember]
+    public byte[] ScriptIcon
+    {
+        get
+        {
+            using (Icon icon = Icon.ExtractAssociatedIcon(FilePath))
+            {
+                if (icon != null)
+                {
+                    return ConvertIconToByteArray(icon);
+                }
+            }
+            return null;
+        }
+    }
 
     public static List<ScriptFile> ScriptFiles { get; private set; } = new List<ScriptFile>();
 
@@ -32,6 +49,15 @@ public class ScriptFile
                     FilePath = script
                 });
             }
+        }
+    }
+
+    private byte[] ConvertIconToByteArray(Icon icon)
+    {
+        using (var stream = new MemoryStream())
+        {
+            icon.ToBitmap().Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            return stream.ToArray();
         }
     }
 }

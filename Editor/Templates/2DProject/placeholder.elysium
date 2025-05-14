@@ -1,16 +1,48 @@
-<Project z:Id="i1" 
-xmlns="http://schemas.datacontract.org/2004/07/Editor.GameProject" 
-xmlns:i="http://www.w3.org/2001/XMLSchema-instance" 
-xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
-<IconPath>{2}</IconPath>
-<Name>{0}</Name>
-<Path>{1}</Path>
-<ScreenshotPath>{3}</ScreenshotPath>
-<Scenes>
-	<Scene z:Id="i2">
-		<GameEntities></GameEntities>
-		<Name>Default Scene</Name>
-		<Project z:Ref="i1"/>
-		<isLoaded>true</isLoaded>
-	</Scene></Scenes>
+<Project z:Id="i1" xmlns="http://schemas.datacontract.org/2004/07/Editor.GameProject" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+	<IconPath>C:\Users\User\Source\Repos\Elysium\Editor\Templates\EmptyProject\icon.png</IconPath>
+	<Name>{0}</Name>
+	<ScreenshotPath>C:\Users\User\Source\Repos\Elysium\Editor\Templates\EmptyProject\screenshot.png</ScreenshotPath>
+	<Scenes>
+		<Scene z:Id="i2">
+			<Background xmlns:a="http://schemas.datacontract.org/2004/07/Editor.Utils">
+				<a:FileName>skybox.jfif</a:FileName>
+				<a:ImagePath>C:\Users\User\Source\Repos\Elysium\GameEngine\Resourses\Textures\skybox.jfif</a:ImagePath>
+			</Background>
+			<GameEntities xmlns:a="http://schemas.datacontract.org/2004/07/Editor.Components">
+				<a:GameEntity z:Id="i3">
+					<a:EntityId>1</a:EntityId>
+					<a:HasCollision>true</a:HasCollision>
+					<a:HasGravity>false</a:HasGravity>
+					<a:IsActive>true</a:IsActive>
+					<a:Mass>1</a:Mass>
+					<a:Name>New Entity 0</a:Name>
+					<a:Physics z:Id="i4">
+						<a:ParentEntity z:Ref="i3"/>
+						<a:gravity>-9.81</a:gravity>
+					</a:Physics>
+					<a:Scripts xmlns:b="http://schemas.datacontract.org/2004/07/Editor.Scripting"/>
+					<a:Texture xmlns:b="http://schemas.datacontract.org/2004/07/Editor.Utils">
+						<b:FileName i:nil="true"/>
+						<b:ImagePath i:nil="true"/>
+					</a:Texture>
+					<a:Transform z:Id="i5">
+						<a:ParentEntity z:Ref="i3"/>
+						<a:Position xmlns:b="http://schemas.datacontract.org/2004/07/OpenTK.Mathematics">
+							<b:X>0</b:X>
+							<b:Y>0</b:Y>
+							<b:Z>0</b:Z>
+						</a:Position>
+						<a:RotationZ>0</a:RotationZ>
+						<a:Scale xmlns:b="http://schemas.datacontract.org/2004/07/OpenTK.Mathematics">
+							<b:X>1</b:X>
+							<b:Y>1</b:Y>
+							<b:Z>1</b:Z>
+						</a:Scale>
+					</a:Transform>
+				</a:GameEntity>
+			</GameEntities>
+			<Name>Default Scene</Name>
+			<isLoaded>true</isLoaded>
+		</Scene>
+	</Scenes>
 </Project>
