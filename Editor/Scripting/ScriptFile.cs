@@ -35,12 +35,31 @@ public class ScriptFile
 
     public static List<ScriptFile> ScriptFiles { get; private set; } = new List<ScriptFile>();
 
+
     public static void LoadScriptsFromDirectory(string directoryPath)
     {
+        LoadDefaultScripts();
         if (Directory.Exists(directoryPath))
         {
-            ScriptFiles.Clear();
             var scripts = Directory.GetFiles(directoryPath, "*.lua");
+            foreach (var script in scripts)
+            {
+                ScriptFiles.Add(new ScriptFile
+                {
+                    FileName = Path.GetFileName(script),
+                    FilePath = script
+                });
+            }
+        }
+    }
+
+    public static void LoadDefaultScripts()
+    {
+        string defaultScriptsFolderPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../GameEngine", "Resourses/Scripts"));
+        if (Directory.Exists(defaultScriptsFolderPath))
+        {
+            ScriptFiles.Clear();
+            var scripts = Directory.GetFiles(defaultScriptsFolderPath, "*.lua");
             foreach (var script in scripts)
             {
                 ScriptFiles.Add(new ScriptFile

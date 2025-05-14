@@ -47,6 +47,7 @@ public partial class NewProjectView : UserControl
                 TextureFile.LoadTexturesFromDirectory(projectTexturesFolderPath);
                 string projectScriptsFolderPath = Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ElysiumProjects", projectManager.Project.Name, "Scripts"));
                 ScriptFile.LoadScriptsFromDirectory(projectScriptsFolderPath);
+
             }
            
         }
