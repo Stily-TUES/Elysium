@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
+using Editor.Utils;
 
 namespace Editor.Scripting;
 
@@ -55,7 +56,7 @@ public class ScriptFile
 
     public static void LoadDefaultScripts()
     {
-        string defaultScriptsFolderPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../GameEngine", "Resourses/Scripts"));
+        string defaultScriptsFolderPath = Path.Combine(PathHelper.BasePath, "GameEngine", "Resourses", "Scripts");
         if (Directory.Exists(defaultScriptsFolderPath))
         {
             ScriptFiles.Clear();

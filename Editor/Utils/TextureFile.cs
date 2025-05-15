@@ -21,7 +21,7 @@ public class TextureFile
 
     static TextureFile()
     {
-        string texturesFolderPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../GameEngine", "Resourses/Textures"));
+        string texturesFolderPath = Path.Combine(PathHelper.BasePath, "GameEngine", "Resourses", "Textures");
         if (Directory.Exists(texturesFolderPath))
         {
             TextureFiles = Directory.GetFiles(texturesFolderPath)

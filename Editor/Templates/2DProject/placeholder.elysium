@@ -1,7 +1,7 @@
 <Project z:Id="i1" xmlns="http://schemas.datacontract.org/2004/07/Editor.GameProject" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
-	<IconPath>C:\Users\User\Source\Repos\Elysium\Editor\Templates\EmptyProject\icon.png</IconPath>
+	<IconPath>{2}</IconPath>
 	<Name>{0}</Name>
-	<ScreenshotPath>C:\Users\User\Source\Repos\Elysium\Editor\Templates\EmptyProject\screenshot.png</ScreenshotPath>
+	<ScreenshotPath>{3}</ScreenshotPath>
 	<Scenes>
 		<Scene z:Id="i2">
 			<Background xmlns:a="http://schemas.datacontract.org/2004/07/Editor.Utils">

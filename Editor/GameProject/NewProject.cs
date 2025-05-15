@@ -34,7 +34,7 @@ public class ProjectTemplate
 class NewProject : BaseViewModel
 {
     
-    private readonly string _templatePath = @"../../../../Editor/Templates";
+    private readonly string _templatePath = Path.Combine(PathHelper.BasePath, "Editor", "Templates");
     private string _projectName = "New Project";
     public string ProjectName 
     { 

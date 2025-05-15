@@ -182,7 +182,7 @@ public class GameEntity : BaseViewModel
 
     public void Render(Camera camera, float aspectRatio)
     {
-        Renderer renderer = new Renderer();
+        Renderer renderer = new Renderer(PathHelper.BasePath);
 
         Matrix4 modelMatrix = Transform.CreateModelMatrix();
         renderer.RenderMesh(_textureId, _squareMesh, modelMatrix, camera.GetViewMatrix(), camera.GetProjectionMatrix(aspectRatio));

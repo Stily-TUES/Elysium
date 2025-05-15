@@ -78,7 +78,7 @@ public partial class ProjectEditorView : UserControl
         renderTimer.Start();
 
         camera = new Camera();
-        renderer = new Renderer();
+        renderer = new Renderer(PathHelper.BasePath);
         backgroundMesh = Mesh.CreateSquare(backgroundMeshSize);
 
         gameMechanics = new GameMechanics(projectManager);

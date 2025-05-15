@@ -17,9 +17,12 @@ public class Renderer
     private int shaderProgram;
     private int _backgroundTextureId;
     public static void Main() { }
-    public Renderer()
+    public Renderer(string basePath)
     {
-        shaderProgram = CreateShaderProgram("../../../../GameEngine/Shaders/shader.vert", "../../../../GameEngine/Shaders/shader.frag");
+        shaderProgram = CreateShaderProgram(
+            Path.Combine(basePath, "GameEngine", "Shaders", "shader.vert"),
+            Path.Combine(basePath, "GameEngine", "Shaders", "shader.frag")
+        );
     }
 
     private int CreateShaderProgram(string vertexPath, string fragmentPath)

@@ -50,8 +50,8 @@
                 <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Transform.PositionZ}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Scale" Foreground="White" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Transform.ScaleX}" Background="#2a2f28" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
-                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Transform.ScaleY}" Background="#2a2f28" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Transform.ScaleX}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
+                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Transform.ScaleY}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
                 <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Transform.ScaleZ}" Background="#2a2f38" Foreground="White" TextAlignment="Center" Width="50" KeyDown="TransformTextBox_KeyDown"/>
                 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Rotation" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Width="50"/>
