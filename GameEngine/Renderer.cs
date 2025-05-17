@@ -66,6 +66,12 @@ public class Renderer
 
         Matrix4 transformMatrix = modelMatrix * viewMatrix * projectionMatrix;
         int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
+        //int modelLoc = GL.GetUniformLocation(shaderProgram, "modelMatrix");
+        //int viewLoc = GL.GetUniformLocation(shaderProgram, "viewMatrix");
+        //int projectionLoc = GL.GetUniformLocation(shaderProgram, "projectionMatrix");
+        //GL.UniformMatrix4(modelLoc, false, ref modelMatrix);
+        //GL.UniformMatrix4(viewLoc, false, ref viewMatrix);
+        //GL.UniformMatrix4(projectionLoc, false, ref projectionMatrix);
         GL.UniformMatrix4(transformLoc, false, ref transformMatrix);
         mesh.Render(shaderProgram, textureId);
     }
